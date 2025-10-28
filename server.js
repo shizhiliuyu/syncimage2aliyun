@@ -597,6 +597,35 @@ app.post('/wechat/callback', async (req, res) => {
         await sendWeChatMessage(fromUser, confirmMsg);
         
         try {
+          // 添加所有镜像到 images.txt
+          const skipped = [];
+          const added = [];
+          
+          for (const imageInfo of imagesList) {
+            console.log('处理镜像:', JSON.stringify(imageInfo, null, 2));
+            const addResult = addImageToFile(imageInfo);
+            if (addResult.added) {
+              added.push(imageInfo.sourceImage);
+            } else {
+              skipped.push(imageInfo.sourceImage);
+            }
+          }
+          
+          // 打印最终写入的内容
+          const finalContent = fs.readFileSync('images.txt', 'utf8');
+          console.log('📄 images.txt 最终内容:');
+          console.log(finalContent);
+          console.log('📄 文件行数:', finalContent.split('\n').length);
+          
+          if (added.length === 0) {
+            await sendWeChatMessage(fromUser, `⚠️ 所有镜像均已存在`);
+            res.send('success');
+            return;
+          }
+          
+          // 构建提交信息
+          const commitMessage = `feat: 添加 ${added.length} 个镜像同步${isMultiple ? '任务' : ''}\n\n${added.join('\n')}`;
+          
           // 使用文件锁机制处理并发
           const lockFile = path.join(__dirname, 'images.txt.lock');
           const maxRetries = 10;
@@ -620,38 +649,6 @@ app.post('/wechat/callback', async (req, res) => {
           console.log('🔒 获取文件锁成功');
           
           try {
-            // 添加所有镜像到 images.txt
-            const skipped = [];
-            const added = [];
-            
-            for (const imageInfo of imagesList) {
-              console.log('处理镜像:', JSON.stringify(imageInfo, null, 2));
-              const addResult = addImageToFile(imageInfo);
-              if (addResult.added) {
-                added.push(imageInfo.sourceImage);
-              } else {
-                skipped.push(imageInfo.sourceImage);
-              }
-            }
-            
-            // 打印最终写入的内容
-            const finalContent = fs.readFileSync('images.txt', 'utf8');
-            console.log('📄 images.txt 最终内容:');
-            console.log(finalContent);
-            console.log('📄 文件行数:', finalContent.split('\n').length);
-            
-            if (added.length === 0) {
-              await sendWeChatMessage(fromUser, `⚠️ 所有镜像均已存在`);
-              res.send('success');
-              return;
-            }
-            
-            // 构建提交信息
-            const commitMessage = `feat: 添加 ${added.length} 个镜像同步${isMultiple ? '任务' : ''}\n\n${added.join('\n')}`;
-            
-            // 读取当前 images.txt 内容
-            const currentContent = fs.readFileSync('images.txt', 'utf8');
-            
             // 使用 GitHub API 更新文件
             await updateGitHubFile(commitMessage);
             
