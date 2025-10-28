@@ -1,17 +1,1 @@
-# Docker 镜像同步列表
-# 使用 # 开头作为注释
-# 格式: <源镜像地址> to <目标镜像地址>:<标签>
-# 可添加 --platform=<架构> 参数指定镜像架构
-
-# 示例：同步 Nginx 镜像
-# nginx:latest to registry.cn-hangzhou.aliyuncs.com/my-namespace/nginx:latest
-
-# 示例：同步多个标签
-# redis:6.2 to registry.cn-hangzhou.aliyuncs.com/my-namespace/redis:6.2
-# redis:7.0 to registry.cn-hangzhou.aliyuncs.com/my-namespace/redis:7.0
-
-# K8s 相关镜像（需要指定架构）
-# --platform=linux/amd64 k8s.gcr.io/pause:3.9
-# --platform=linux/arm64 k8s.gcr.io/pause:3.9
-
-
+mysql:5.7 to registry.cn-hangzhou.aliyuncs.com/syncimage2aliyun/mysql:5.7
