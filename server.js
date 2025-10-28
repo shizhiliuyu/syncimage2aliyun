@@ -353,7 +353,9 @@ async function getGitHubActionsStatus(runId) {
 // 获取 GitHub Actions 运行日志
 async function getGitHubActionsLogs(runId) {
   try {
-    // 首先获取 run 信息
+    console.log('开始获取 run logs，runId:', runId);
+    
+    // 获取 run 信息
     const runUrl = `https://api.github.com/repos/${CONFIG.GITHUB_REPO}/actions/runs/${runId}`;
     const runResponse = await axios.get(runUrl, {
       headers: {
@@ -363,6 +365,8 @@ async function getGitHubActionsLogs(runId) {
     });
     
     const run = runResponse.data;
+    console.log('Run status:', run.status, 'conclusion:', run.conclusion);
+    console.log('Logs URL:', run.logs_url);
     
     // 获取 job 信息
     const jobsUrl = `https://api.github.com/repos/${CONFIG.GITHUB_REPO}/actions/runs/${runId}/jobs`;
@@ -374,13 +378,70 @@ async function getGitHubActionsLogs(runId) {
     });
     
     const jobs = jobsResponse.data.jobs || [];
+    console.log('Jobs数量:', jobs.length);
+    
+    const successList = [];
+    const failedList = [];
     
     // 查找 sync-images job
     for (const job of jobs) {
+      console.log('检查 job:', job.name, 'status:', job.status, 'conclusion:', job.conclusion);
+      
       if (job.name === 'sync-images' && job.status === 'completed') {
+        console.log('找到 sync-images job，logs_url:', job.logs_url);
+        
+        // 尝试获取日志内容
+        if (job.logs_url) {
+          try {
+            // 从 logs_url 获取日志
+            const logResponse = await axios.get(job.logs_url, {
+              headers: {
+                'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
+              },
+              responseType: 'text',
+              timeout: 15000,
+              maxContentLength: 50 * 1024 * 1024, // 50MB
+            });
+            
+            const logContent = logResponse.data;
+            console.log('✅ 成功获取日志，长度:', logContent.length);
+            console.log('日志前500字符:', logContent.substring(0, 500));
+            
+            // 解析日志中的成功和失败信息
+            // 使用多行匹配，处理换行
+            const successPattern = /SUCCESS:(.+?)(?=SUCCESS:|FAILED:|$)/gs;
+            const failedPattern = /FAILED:(.+?)(?=SUCCESS:|FAILED:|$)/gs;
+            
+            const successMatches = Array.from(logContent.matchAll(successPattern));
+            const failedMatches = Array.from(logContent.matchAll(failedPattern));
+            
+            console.log('Success matches:', successMatches.length);
+            console.log('Failed matches:', failedMatches.length);
+            
+            if (successMatches.length > 0) {
+              successList.push(...successMatches.map(m => m[1].trim().replace(/\n/g, ' ')));
+              console.log('解析到的成功记录:', successList);
+            }
+            if (failedMatches.length > 0) {
+              failedList.push(...failedMatches.map(m => m[1].trim().replace(/\n/g, ' ')));
+              console.log('解析到的失败记录:', failedList);
+            }
+            
+            // 也尝试简单的行匹配
+            const lineMatches = logContent.split('\n').filter(line => 
+              line.includes('SUCCESS:') || line.includes('FAILED:')
+            );
+            console.log('包含 SUCCESS/FAILED 的行数:', lineMatches.length);
+            
+          } catch (logError) {
+            console.log('❌ 无法获取日志:', logError.message);
+            console.log('Error response:', logError.response?.status, logError.response?.statusText);
+          }
+        }
+        
         return {
-          success: [],
-          failed: [],
+          success: successList,
+          failed: failedList,
           conclusion: job.conclusion,
           logs_url: job.logs_url
         };
@@ -388,10 +449,10 @@ async function getGitHubActionsLogs(runId) {
     }
     
     return {
-      success: [],
-      failed: [],
+      success: successList,
+      failed: failedList,
       conclusion: run.conclusion,
-      logs_url: null
+      logs_url: run.logs_url
     };
   } catch (error) {
     console.error('获取 Actions 日志失败:', error.message);
@@ -733,35 +794,16 @@ app.post('/wechat/callback', async (req, res) => {
               
               if (result.conclusion === 'failure') {
                 // 只有失败时才尝试获取详细日志
+                console.log('尝试获取失败时的详细日志...');
                 try {
                   const logResult = await getGitHubActionsLogs(result.id);
+                  console.log('日志获取结果:', JSON.stringify(logResult, null, 2));
                   
-                  // 尝试从 logs_url 获取日志（如果可用）
-                  if (logResult.logs_url) {
-                    try {
-                      const logResponse = await axios.get(logResult.logs_url, {
-                        headers: {
-                          'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
-                        },
-                        responseType: 'text',
-                        timeout: 10000
-                      });
-                      
-                      const logContent = logResponse.data;
-                      
-                      // 解析日志中的成功和失败信息
-                      const successMatches = logContent.match(/^SUCCESS:(.+)$/gm);
-                      const failedMatches = logContent.match(/^FAILED:(.+)$/gm);
-                      
-                      if (successMatches) {
-                        successList = successMatches.map(m => m.replace(/^SUCCESS:/, '').trim());
-                      }
-                      if (failedMatches) {
-                        failedList = failedMatches.map(m => m.replace(/^FAILED:/, '').trim());
-                      }
-                    } catch (logError) {
-                      console.log('无法解析日志内容:', logError.message);
-                    }
+                  if (logResult.success && logResult.success.length > 0) {
+                    successList = logResult.success;
+                  }
+                  if (logResult.failed && logResult.failed.length > 0) {
+                    failedList = logResult.failed;
                   }
                 } catch (error) {
                   console.log('获取详细结果失败:', error.message);
