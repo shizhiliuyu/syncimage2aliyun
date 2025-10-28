@@ -1,0 +1,167 @@
+name: Docker Image Sync
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'images.txt'
+
+jobs:
+  sync-images:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Log in to target Docker registry
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin ${{ secrets.DOCKER_REGISTRY }}
+      
+      - name: Read and parse images.txt
+        id: images
+        run: |
+          echo "正在读取 images.txt..."
+          
+          # 创建临时文件存放镜像信息
+          mkdir -p /tmp/images
+          
+          # 读取并解析 images.txt
+          while IFS= read -r line; do
+            # 跳过空行和注释
+            [[ -z "$line" || $line =~ ^[[:space:]]*# ]] && continue
+            
+            # 提取 platform 参数
+            platform=""
+            if [[ $line =~ --platform=([^[:space:]]+) ]]; then
+              platform="${BASH_REMATCH[1]}"
+              # 移除 --platform 参数
+              line=$(echo "$line" | sed 's/--platform=[^[:space:]]*//g')
+            fi
+            
+            # 解析格式: <源镜像> to <目标镜像>:<标签>
+            if [[ $line =~ ^([^[:space:]]+)[[:space:]]+to[[:space:]]+([^[:space:]]+):([^[:space:]]+)$ ]]; then
+              source="${BASH_REMATCH[1]}"
+              target="${BASH_REMATCH[2]}"
+              tag="${BASH_REMATCH[3]}"
+              
+              echo "source=${source}" >> /tmp/images/$(date +%s).txt
+              echo "target=${target}" >> /tmp/images/$(date +%s).txt
+              echo "tag=${tag}" >> /tmp/images/$(date +%s).txt
+              echo "platform=${platform}" >> /tmp/images/$(date +%s).txt
+              
+              echo "✅ 发现镜像: $source -> ${target}:${tag}"
+            fi
+          done < images.txt
+          
+          # 统计镜像数量
+          count=$(ls -1 /tmp/images/*.txt 2>/dev/null | wc -l)
+          echo "镜像总数: $count"
+          echo "count=$count" >> $GITHUB_OUTPUT
+      
+      - name: Sync images
+        id: sync
+        run: |
+          failed_images=()
+          success_images=()
+          
+          for image_file in /tmp/images/*.txt; do
+            [ ! -f "$image_file" ] && continue
+            
+            source=$(grep "^source=" "$image_file" | cut -d= -f2)
+            target=$(grep "^target=" "$image_file" | cut -d= -f2)
+            tag=$(grep "^tag=" "$image_file" | cut -d= -f2)
+            platform=$(grep "^platform=" "$image_file" | cut -d= -f2)
+            
+            full_target="${target}:${tag}"
+            
+            echo ""
+            echo "========================================"
+            echo "正在同步镜像: $source -> $full_target"
+            [[ -n "$platform" ]] && echo "指定平台: $platform"
+            echo "========================================"
+            
+            # 拉取镜像
+            if [[ -n "$platform" ]]; then
+              if docker pull --platform="$platform" "$source"; then
+                echo "✅ 拉取成功: $source"
+              else
+                echo "❌ 拉取失败: $source"
+                failed_images+=("$source -> $full_target")
+                continue
+              fi
+            else
+              if docker pull "$source"; then
+                echo "✅ 拉取成功: $source"
+              else
+                echo "❌ 拉取失败: $source"
+                failed_images+=("$source -> $full_target")
+                continue
+              fi
+            fi
+            
+            # 标记镜像
+            if docker tag "$source" "$full_target"; then
+              echo "✅ 标记成功: $full_target"
+            else
+              echo "❌ 标记失败: $full_target"
+              failed_images+=("$source -> $full_target")
+              continue
+            fi
+            
+            # 推送镜像
+            if docker push "$full_target"; then
+              echo "✅ 推送成功: $full_target"
+              success_images+=("$source -> $full_target")
+            else
+              echo "❌ 推送失败: $full_target"
+              failed_images+=("$source -> $full_target")
+            fi
+          done
+          
+          # 输出结果
+          echo "========================================"
+          echo "镜像同步完成"
+          echo "成功: ${#success_images[@]}"
+          echo "失败: ${#failed_images[@]}"
+          echo "========================================"
+          
+          if [ ${#failed_images[@]} -gt 0 ]; then
+            echo "失败的镜像："
+            for img in "${failed_images[@]}"; do
+              echo "  ❌ $img"
+            done
+            
+            # 设置输出
+            echo "failed=true" >> $GITHUB_OUTPUT
+            echo "failed_list=${failed_images[*]}" >> $GITHUB_OUTPUT
+            
+            # 退出失败
+            exit 1
+          else
+            echo "所有镜像同步成功！"
+            echo "failed=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Clean up
+        if: always()
+        run: |
+          echo "清理本地镜像..."
+          docker image prune -f
+          docker system prune -f
+      
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ steps.sync.outputs.failed }}" = "true" ]; then
+            echo "❌ 部分镜像同步失败"
+            echo "${{ steps.sync.outputs.failed_list }}"
+            exit 1
+          else
+            echo "✅ 所有镜像同步成功"
+          fi
