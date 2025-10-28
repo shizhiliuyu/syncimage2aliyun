@@ -66,52 +66,72 @@ jobs:
           # 并发同步函数
           sync_image() {
             local image_info="$1"
-            local source=$(echo "$image_info" | cut -d'|' -f1)
-            local target=$(echo "$image_info" | cut -d'|' -f2)
-            local tag=$(echo "$image_info" | cut -d'|' -f3)
-            local platform=$(echo "$image_info" | cut -d'|' -f4)
+            
+            # 使用数组提取
+            IFS='|' read -ra parts <<< "$image_info"
+            local source="${parts[0]}"
+            local target="${parts[1]}"
+            local tag="${parts[2]}"
+            local platform="${parts[3]:-}"  # 默认空字符串
+            
             local full_target="${target}:${tag}"
             
             echo ""
-            echo "[$(date +%T)] 开始同步: $source -> $full_target"
-            [[ -n "$platform" ]] && echo "[$(date +%T)] 指定平台: $platform"
-            
-            local result=""
+            echo "========================================"
+            echo "开始同步: $source -> $full_target"
+            if [[ -n "$platform" ]]; then
+              echo "指定平台: $platform"
+            else
+              echo "使用默认平台"
+            fi
+            echo "========================================"
             
             # 拉取镜像
+            local pull_result=0
             if [[ -n "$platform" ]]; then
-              if docker pull --platform="$platform" "$source" 2>&1; then
-                result="SUCCESS"
+              echo "执行: docker pull --platform=$platform $source"
+              if docker pull --platform="$platform" "$source"; then
+                pull_result=0
+                echo "✅ 拉取成功"
               else
-                result="FAILED_PULL"
+                pull_result=1
+                echo "❌ 拉取失败"
               fi
             else
-              if docker pull "$source" 2>&1; then
-                result="SUCCESS"
+              echo "执行: docker pull $source"
+              if docker pull "$source"; then
+                pull_result=0
+                echo "✅ 拉取成功"
               else
-                result="FAILED_PULL"
+                pull_result=1
+                echo "❌ 拉取失败"
               fi
             fi
             
-            if [[ "$result" != "FAILED_PULL" ]]; then
+            if [[ $pull_result -eq 0 ]]; then
               # 标记镜像
-              if docker tag "$source" "$full_target" 2>&1; then
+              echo "执行: docker tag $source $full_target"
+              if docker tag "$source" "$full_target"; then
+                echo "✅ 标记成功"
+                
                 # 推送镜像
-                if docker push "$full_target" 2>&1; then
-                  echo "[$(date +%T)] ✅ 成功: $full_target"
+                echo "执行: docker push $full_target"
+                if docker push "$full_target"; then
+                  echo "✅ 推送成功"
                   echo "SUCCESS:$source -> $full_target"
                 else
-                  echo "[$(date +%T)] ❌ 推送失败: $full_target"
+                  echo "❌ 推送失败"
                   echo "FAILED_PUSH:$source -> $full_target"
                 fi
               else
-                echo "[$(date +%T)] ❌ 标记失败: $full_target"
+                echo "❌ 标记失败"
                 echo "FAILED_TAG:$source -> $full_target"
               fi
             else
-              echo "[$(date +%T)] ❌ 拉取失败: $source"
+              echo "❌ 操作失败"
               echo "FAILED_PULL:$source -> $full_target"
             fi
+            echo ""
           }
           
           # 并发处理，导出函数供子进程使用
