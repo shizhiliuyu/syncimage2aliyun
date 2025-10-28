@@ -31,21 +31,30 @@ jobs:
           cat images.txt
           echo ""
           
-          # 收集镜像列表
-          images_list=()
-          idx=0
-          
-          while IFS= read -r line; do
+          # 定义同步函数
+          sync_image() {
+            local line="$1"
+            local job_num="$2"
+            
             # 跳过空行和注释
             if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
-              continue
+              echo "任务 $job_num: 跳过空行或注释"
+              return 0
             fi
+            
+            echo ""
+            echo "========================================"
+            echo "任务 $job_num: 开始处理"
+            echo "原始行: $line"
+            echo "========================================"
             
             # 提取 platform 参数
             platform=""
             if [[ "$line" =~ --platform=([^[:space:]]+) ]]; then
               platform="${BASH_REMATCH[1]}"
-              line=$(echo "$line" | sed 's/--platform=[^[:space:]]*//g')
+              line=$(echo "$line" | sed 's/--platform=[^[:space:]]*[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+              echo "检测到平台参数: $platform"
+              echo "处理后的行: $line"
             fi
             
             # 解析格式: <源镜像> to <目标镜像>:<标签>
@@ -53,110 +62,113 @@ jobs:
               source="${BASH_REMATCH[1]}"
               target="${BASH_REMATCH[2]}"
               tag="${BASH_REMATCH[3]}"
+              full_target="${target}:${tag}"
               
-              images_list+=("${source}|${target}|${tag}|${platform}")
-              echo "收集镜像 $((++idx)): $source -> ${target}:${tag}"
+              echo "源镜像: $source"
+              echo "目标镜像: $full_target"
+              echo "平台: ${platform:-默认}"
+              echo ""
+              
+              # 拉取镜像
+              echo "任务 $job_num: 开始拉取镜像..."
+              pull_success=0
+              
+              if [[ -n "$platform" ]]; then
+                echo "执行: docker pull --platform=$platform $source"
+                if docker pull --platform="$platform" "$source" 2>&1; then
+                  pull_success=1
+                  echo "✅ 任务 $job_num: 拉取成功"
+                else
+                  echo "❌ 任务 $job_num: 拉取失败"
+                fi
+              else
+                echo "执行: docker pull $source"
+                if docker pull "$source" 2>&1; then
+                  pull_success=1
+                  echo "✅ 任务 $job_num: 拉取成功"
+                else
+                  echo "❌ 任务 $job_num: 拉取失败"
+                fi
+              fi
+              
+              if [[ $pull_success -eq 1 ]]; then
+                # 标记镜像
+                echo "执行: docker tag $source $full_target"
+                if docker tag "$source" "$full_target" 2>&1; then
+                  echo "✅ 任务 $job_num: 标记成功"
+                  
+                  # 推送镜像
+                  echo "执行: docker push $full_target"
+                  if docker push "$full_target" 2>&1; then
+                    echo "✅ 任务 $job_num: 推送成功"
+                    echo "SUCCESS:$source -> $full_target" >> "$temp_results"
+                  else
+                    echo "❌ 任务 $job_num: 推送失败"
+                    echo "FAILED:$source -> $full_target" >> "$temp_results"
+                  fi
+                else
+                  echo "❌ 任务 $job_num: 标记失败"
+                  echo "FAILED:$source -> $full_target" >> "$temp_results"
+                fi
+              else
+                echo "❌ 任务 $job_num: 操作失败"
+                echo "FAILED:$source -> $full_target" >> "$temp_results"
+              fi
+            else
+              echo "⚠️  任务 $job_num: 无法解析此行，跳过"
             fi
+          }
+          
+          # 导出函数
+          export -f sync_image
+          
+          # 创建临时结果文件
+          temp_results=$(mktemp)
+          export temp_results
+          
+          # 收集所有任务
+          job_num=0
+          pids=()
+          
+          while IFS= read -r line; do
+            ((job_num++))
+            echo "启动后台任务 $job_num"
+            sync_image "$line" "$job_num" &
+            pids+=($!)
           done < images.txt
           
           echo ""
-          echo "镜像总数: ${#images_list[@]}"
-          echo "开始并发同步..."
+          echo "总共启动了 $job_num 个任务"
+          echo "等待所有任务完成..."
           
-          # 并发同步函数
-          sync_image() {
-            local image_info="$1"
-            
-            # 使用数组提取
-            IFS='|' read -ra parts <<< "$image_info"
-            local source="${parts[0]}"
-            local target="${parts[1]}"
-            local tag="${parts[2]}"
-            local platform="${parts[3]:-}"  # 默认空字符串
-            
-            local full_target="${target}:${tag}"
-            
-            echo ""
-            echo "========================================"
-            echo "开始同步: $source -> $full_target"
-            if [[ -n "$platform" ]]; then
-              echo "指定平台: $platform"
-            else
-              echo "使用默认平台"
-            fi
-            echo "========================================"
-            
-            # 拉取镜像
-            local pull_result=0
-            if [[ -n "$platform" ]]; then
-              echo "执行: docker pull --platform=$platform $source"
-              if docker pull --platform="$platform" "$source"; then
-                pull_result=0
-                echo "✅ 拉取成功"
-              else
-                pull_result=1
-                echo "❌ 拉取失败"
-              fi
-            else
-              echo "执行: docker pull $source"
-              if docker pull "$source"; then
-                pull_result=0
-                echo "✅ 拉取成功"
-              else
-                pull_result=1
-                echo "❌ 拉取失败"
-              fi
-            fi
-            
-            if [[ $pull_result -eq 0 ]]; then
-              # 标记镜像
-              echo "执行: docker tag $source $full_target"
-              if docker tag "$source" "$full_target"; then
-                echo "✅ 标记成功"
-                
-                # 推送镜像
-                echo "执行: docker push $full_target"
-                if docker push "$full_target"; then
-                  echo "✅ 推送成功"
-                  echo "SUCCESS:$source -> $full_target"
-                else
-                  echo "❌ 推送失败"
-                  echo "FAILED_PUSH:$source -> $full_target"
-                fi
-              else
-                echo "❌ 标记失败"
-                echo "FAILED_TAG:$source -> $full_target"
-              fi
-            else
-              echo "❌ 操作失败"
-              echo "FAILED_PULL:$source -> $full_target"
-            fi
-            echo ""
-          }
+          # 等待所有后台任务
+          for pid in "${pids[@]}"; do
+            wait "$pid"
+          done
           
-          # 并发处理，导出函数供子进程使用
-          export -f sync_image
+          echo ""
+          echo "所有任务已完成"
           
-          # 记录成功和失败
-          failed_images=()
-          success_images=()
-          
-          # 使用临时文件收集结果
-          temp_results=$(mktemp)
-          
-          # 使用 xargs 并发处理（最大4个并发）
-          printf '%s\n' "${images_list[@]}" | xargs -n1 -P4 -I{} bash -c 'sync_image "$@"' _ {} | tee "$temp_results"
-          
-          # 统计成功和失败
+          # 统计结果
           success_count=$(grep -c "^SUCCESS:" "$temp_results" 2>/dev/null || echo "0")
-          failed_count=$(grep -c "^FAILED" "$temp_results" 2>/dev/null || echo "0")
+          failed_count=$(grep -c "^FAILED:" "$temp_results" 2>/dev/null || echo "0")
           
-          # 简化：直接输出统计
+          echo ""
           echo "========================================"
           echo "镜像同步完成"
-          echo "成功: ${success_count}"
-          echo "失败: ${failed_count}"
+          echo "成功: $success_count"
+          echo "失败: $failed_count"
           echo "========================================"
+          
+          # 显示失败的镜像
+          if [[ $failed_count -gt 0 ]]; then
+            echo ""
+            echo "失败的镜像："
+            grep "^FAILED:" "$temp_results" || true
+          fi
+          
+          # 清理临时文件
+          rm -f "$temp_results"
           
           if [ "$failed_count" -gt 0 ]; then
             echo "failed=true" >> $GITHUB_OUTPUT
