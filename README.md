@@ -33,14 +33,37 @@ GitHub Action 并发执行镜像 pull/tag/push
 
 ## 快速开始
 
-### 1. 克隆项目
+### 1. Fork 项目到自己的 GitHub
+
+1. 访问本项目仓库
+2. 点击右上角的 **Fork** 按钮
+3. 选择要 Fork 到的账号
+4. 等待 Fork 完成
+
+### 2. 配置 GitHub Secrets（必须先配置）
+
+在你的 Fork 仓库中配置 GitHub Secrets：
+
+1. 进入你的 GitHub 仓库
+2. 点击 **Settings** → **Secrets and variables** → **Actions**
+3. 点击 **"New repository secret"**
+
+**添加以下 3 个 Secrets：**
+
+| Secret 名称 | 说明 | 获取方式 |
+|------------|------|--------|
+| `DOCKER_USERNAME` | 阿里云容器镜像服务的用户名 | 登录 [阿里云容器镜像服务](https://cr.console.aliyun.com/) → 访问凭证 → 设置固定密码 |
+| `DOCKER_PASSWORD` | 阿里云密码或访问令牌 | 同上 |
+| `DOCKER_REGISTRY` | 阿里云仓库地址 | `registry.cn-hangzhou.aliyuncs.com` |
+
+### 3. Clone 项目到本地
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/your-username/image-pull-push.git
 cd image-pull-push
 ```
 
-### 2. 配置环境变量
+### 4. 配置环境变量
 
 ```bash
 cp env.example .env
@@ -59,7 +82,7 @@ WECHAT_ENCODING_AES_KEY=加解密密钥
 
 # GitHub
 GITHUB_TOKEN=个人访问令牌（需要 repo 和 workflow 权限）
-GITHUB_REPO=owner/repo
+GITHUB_REPO=your-username/image-pull-push       # 你 Fork 后的仓库地址
 GITHUB_EMAIL=bot@example.com
 GITHUB_NAME=Image Sync Bot
 
@@ -68,7 +91,7 @@ ALIYUN_REGISTRY=registry.cn-hangzhou.aliyuncs.com
 ALIYUN_NAMESPACE=my-namespace
 ```
 
-### 3. 启动服务
+### 5. 启动服务
 
 **Docker Compose 部署：**
 ```bash
@@ -82,7 +105,7 @@ npm install
 npm start
 ```
 
-### 4. 配置企业微信回调
+### 6. 配置企业微信回调
 
 在[企业微信管理后台](https://work.weixin.qq.com/)配置：
 - **回调 URL**: `http://your-domain.com:port/wechat/callback`
