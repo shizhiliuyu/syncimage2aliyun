@@ -26,114 +26,112 @@ jobs:
       - name: Sync images
         id: sync
         run: |
+          set +e  # 不因单条命令失败而退出
+          
           echo "正在读取 images.txt..."
           echo "文件内容："
           cat images.txt
           echo ""
           
-          # 定义同步函数
-          sync_image() {
-            local line="$1"
-            local job_num="$2"
-            
-            # 跳过空行和注释
-            if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
-              echo "任务 $job_num: 跳过空行或注释"
-              return 0
-            fi
-            
-            echo ""
-            echo "========================================"
-            echo "任务 $job_num: 开始处理"
-            echo "原始行: $line"
-            echo "========================================"
-            
-            # 提取 platform 参数
-            platform=""
-            if [[ "$line" =~ --platform=([^[:space:]]+) ]]; then
-              platform="${BASH_REMATCH[1]}"
-              line=$(echo "$line" | sed 's/--platform=[^[:space:]]*[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-              echo "检测到平台参数: $platform"
-              echo "处理后的行: $line"
-            fi
-            
-            # 解析格式: <源镜像> to <目标镜像>:<标签>
-            if [[ "$line" =~ ^([^[:space:]]+)[[:space:]]+to[[:space:]]+([^[:space:]]+):([^[:space:]]+)$ ]]; then
-              source="${BASH_REMATCH[1]}"
-              target="${BASH_REMATCH[2]}"
-              tag="${BASH_REMATCH[3]}"
-              full_target="${target}:${tag}"
-              
-              echo "源镜像: $source"
-              echo "目标镜像: $full_target"
-              echo "平台: ${platform:-默认}"
-              echo ""
-              
-              # 拉取镜像
-              echo "任务 $job_num: 开始拉取镜像..."
-              pull_success=0
-              
-              if [[ -n "$platform" ]]; then
-                echo "执行: docker pull --platform=$platform $source"
-                if docker pull --platform="$platform" "$source" 2>&1; then
-                  pull_success=1
-                  echo "✅ 任务 $job_num: 拉取成功"
-                else
-                  echo "❌ 任务 $job_num: 拉取失败"
-                fi
-              else
-                echo "执行: docker pull $source"
-                if docker pull "$source" 2>&1; then
-                  pull_success=1
-                  echo "✅ 任务 $job_num: 拉取成功"
-                else
-                  echo "❌ 任务 $job_num: 拉取失败"
-                fi
-              fi
-              
-              if [[ $pull_success -eq 1 ]]; then
-                # 标记镜像
-                echo "执行: docker tag $source $full_target"
-                if docker tag "$source" "$full_target" 2>&1; then
-                  echo "✅ 任务 $job_num: 标记成功"
-                  
-                  # 推送镜像
-                  echo "执行: docker push $full_target"
-                  if docker push "$full_target" 2>&1; then
-                    echo "✅ 任务 $job_num: 推送成功"
-                    echo "SUCCESS:$source -> $full_target" >> "$temp_results"
-                  else
-                    echo "❌ 任务 $job_num: 推送失败"
-                    echo "FAILED:$source -> $full_target" >> "$temp_results"
-                  fi
-                else
-                  echo "❌ 任务 $job_num: 标记失败"
-                  echo "FAILED:$source -> $full_target" >> "$temp_results"
-                fi
-              else
-                echo "❌ 任务 $job_num: 操作失败"
-                echo "FAILED:$source -> $full_target" >> "$temp_results"
-              fi
-            else
-              echo "⚠️  任务 $job_num: 无法解析此行，跳过"
-            fi
-          }
-          
-          # 导出函数
-          export -f sync_image
-          
           # 创建临时结果文件
           temp_results=$(mktemp)
-          export temp_results
+          echo "临时文件: $temp_results"
           
-          # 收集所有任务
+          # 逐行处理并启动后台任务
           job_num=0
           pids=()
           
-          while IFS= read -r line; do
+          while IFS= read -r line || [ -n "$line" ]; do
+            # 跳过空行和注释
+            if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
+              continue
+            fi
+            
             ((job_num++))
-            echo "启动后台任务 $job_num"
-            sync_image "$line" "$job_num" &
+            
+            # 在子shell中处理每个镜像
+            (
+              local_line="$line"
+              local_job_num=$job_num
+              local_temp_results="$temp_results"
+              
+              echo ""
+              echo "========================================"
+              echo "任务 $local_job_num: 开始处理"
+              echo "原始行: $local_line"
+              echo "========================================"
+              
+              # 提取 platform 参数
+              platform=""
+              if [[ "$local_line" =~ --platform=([^[:space:]]+) ]]; then
+                platform="${BASH_REMATCH[1]}"
+                local_line=$(echo "$local_line" | sed 's/--platform=[^[:space:]]*[[:space:]]*//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                echo "检测到平台参数: $platform"
+                echo "处理后的行: $local_line"
+              fi
+              
+              # 解析格式: <源镜像> to <目标镜像>:<标签>
+              if [[ "$local_line" =~ ^([^[:space:]]+)[[:space:]]+to[[:space:]]+([^[:space:]]+):([^[:space:]]+)$ ]]; then
+                source="${BASH_REMATCH[1]}"
+                target="${BASH_REMATCH[2]}"
+                tag="${BASH_REMATCH[3]}"
+                full_target="${target}:${tag}"
+                
+                echo "源镜像: $source"
+                echo "目标镜像: $full_target"
+                echo "平台: ${platform:-默认}"
+                echo ""
+                
+                # 拉取镜像
+                echo "任务 $local_job_num: 开始拉取镜像..."
+                pull_success=0
+                
+                if [[ -n "$platform" ]]; then
+                  echo "执行: docker pull --platform=$platform $source"
+                  if docker pull --platform="$platform" "$source" 2>&1; then
+                    pull_success=1
+                    echo "✅ 任务 $local_job_num: 拉取成功"
+                  else
+                    echo "❌ 任务 $local_job_num: 拉取失败"
+                  fi
+                else
+                  echo "执行: docker pull $source"
+                  if docker pull "$source" 2>&1; then
+                    pull_success=1
+                    echo "✅ 任务 $local_job_num: 拉取成功"
+                  else
+                    echo "❌ 任务 $local_job_num: 拉取失败"
+                  fi
+                fi
+                
+                if [[ $pull_success -eq 1 ]]; then
+                  # 标记镜像
+                  echo "执行: docker tag $source $full_target"
+                  if docker tag "$source" "$full_target" 2>&1; then
+                    echo "✅ 任务 $local_job_num: 标记成功"
+                    
+                    # 推送镜像
+                    echo "执行: docker push $full_target"
+                    if docker push "$full_target" 2>&1; then
+                      echo "✅ 任务 $local_job_num: 推送成功"
+                      echo "SUCCESS:$source -> $full_target" >> "$local_temp_results"
+                    else
+                      echo "❌ 任务 $local_job_num: 推送失败"
+                      echo "FAILED:$source -> $full_target" >> "$local_temp_results"
+                    fi
+                  else
+                    echo "❌ 任务 $local_job_num: 标记失败"
+                    echo "FAILED:$source -> $full_target" >> "$local_temp_results"
+                  fi
+                else
+                  echo "❌ 任务 $local_job_num: 操作失败"
+                  echo "FAILED:$source -> $full_target" >> "$local_temp_results"
+                fi
+              else
+                echo "⚠️  任务 $local_job_num: 无法解析此行: $local_line"
+              fi
+            ) &
+            
             pids+=($!)
           done < images.txt
           
