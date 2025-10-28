@@ -23,106 +23,88 @@ jobs:
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin ${{ secrets.DOCKER_REGISTRY }}
       
-      - name: Read and parse images.txt
-        id: images
+      - name: Sync images
+        id: sync
         run: |
           echo "正在读取 images.txt..."
+          echo "文件内容："
+          cat images.txt
+          echo ""
           
-          # 创建临时文件存放镜像信息
-          mkdir -p /tmp/images
+          failed_images=()
+          success_images=()
           
-          # 读取并解析 images.txt
+          # 读取并处理每一行
+          idx=0
           while IFS= read -r line; do
             # 跳过空行和注释
-            [[ -z "$line" || $line =~ ^[[:space:]]*# ]] && continue
+            if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
+              continue
+            fi
             
             # 提取 platform 参数
             platform=""
-            if [[ $line =~ --platform=([^[:space:]]+) ]]; then
+            if [[ "$line" =~ --platform=([^[:space:]]+) ]]; then
               platform="${BASH_REMATCH[1]}"
-              # 移除 --platform 参数
               line=$(echo "$line" | sed 's/--platform=[^[:space:]]*//g')
             fi
             
             # 解析格式: <源镜像> to <目标镜像>:<标签>
-            if [[ $line =~ ^([^[:space:]]+)[[:space:]]+to[[:space:]]+([^[:space:]]+):([^[:space:]]+)$ ]]; then
+            if [[ "$line" =~ ^([^[:space:]]+)[[:space:]]+to[[:space:]]+([^[:space:]]+):([^[:space:]]+)$ ]]; then
               source="${BASH_REMATCH[1]}"
               target="${BASH_REMATCH[2]}"
               tag="${BASH_REMATCH[3]}"
               
-              echo "source=${source}" >> /tmp/images/$(date +%s).txt
-              echo "target=${target}" >> /tmp/images/$(date +%s).txt
-              echo "tag=${tag}" >> /tmp/images/$(date +%s).txt
-              echo "platform=${platform}" >> /tmp/images/$(date +%s).txt
+              idx=$((idx + 1))
+              full_target="${target}:${tag}"
               
-              echo "✅ 发现镜像: $source -> ${target}:${tag}"
+              echo ""
+              echo "========================================"
+              echo "正在同步镜像 $idx: $source -> $full_target"
+              [[ -n "$platform" ]] && echo "指定平台: $platform"
+              echo "========================================"
+              
+              # 拉取镜像
+              if [[ -n "$platform" ]]; then
+                if docker pull --platform="$platform" "$source"; then
+                  echo "✅ 拉取成功: $source"
+                else
+                  echo "❌ 拉取失败: $source"
+                  failed_images+=("$source -> $full_target")
+                  continue
+                fi
+              else
+                if docker pull "$source"; then
+                  echo "✅ 拉取成功: $source"
+                else
+                  echo "❌ 拉取失败: $source"
+                  failed_images+=("$source -> $full_target")
+                  continue
+                fi
+              fi
+              
+              # 标记镜像
+              if docker tag "$source" "$full_target"; then
+                echo "✅ 标记成功: $full_target"
+              else
+                echo "❌ 标记失败: $full_target"
+                failed_images+=("$source -> $full_target")
+                continue
+              fi
+              
+              # 推送镜像
+              if docker push "$full_target"; then
+                echo "✅ 推送成功: $full_target"
+                success_images+=("$source -> $full_target")
+              else
+                echo "❌ 推送失败: $full_target"
+                failed_images+=("$source -> $full_target")
+              fi
             fi
           done < images.txt
           
-          # 统计镜像数量
-          count=$(ls -1 /tmp/images/*.txt 2>/dev/null | wc -l)
-          echo "镜像总数: $count"
-          echo "count=$count" >> $GITHUB_OUTPUT
-      
-      - name: Sync images
-        id: sync
-        run: |
-          failed_images=()
-          success_images=()
-          
-          for image_file in /tmp/images/*.txt; do
-            [ ! -f "$image_file" ] && continue
-            
-            source=$(grep "^source=" "$image_file" | cut -d= -f2)
-            target=$(grep "^target=" "$image_file" | cut -d= -f2)
-            tag=$(grep "^tag=" "$image_file" | cut -d= -f2)
-            platform=$(grep "^platform=" "$image_file" | cut -d= -f2)
-            
-            full_target="${target}:${tag}"
-            
-            echo ""
-            echo "========================================"
-            echo "正在同步镜像: $source -> $full_target"
-            [[ -n "$platform" ]] && echo "指定平台: $platform"
-            echo "========================================"
-            
-            # 拉取镜像
-            if [[ -n "$platform" ]]; then
-              if docker pull --platform="$platform" "$source"; then
-                echo "✅ 拉取成功: $source"
-              else
-                echo "❌ 拉取失败: $source"
-                failed_images+=("$source -> $full_target")
-                continue
-              fi
-            else
-              if docker pull "$source"; then
-                echo "✅ 拉取成功: $source"
-              else
-                echo "❌ 拉取失败: $source"
-                failed_images+=("$source -> $full_target")
-                continue
-              fi
-            fi
-            
-            # 标记镜像
-            if docker tag "$source" "$full_target"; then
-              echo "✅ 标记成功: $full_target"
-            else
-              echo "❌ 标记失败: $full_target"
-              failed_images+=("$source -> $full_target")
-              continue
-            fi
-            
-            # 推送镜像
-            if docker push "$full_target"; then
-              echo "✅ 推送成功: $full_target"
-              success_images+=("$source -> $full_target")
-            else
-              echo "❌ 推送失败: $full_target"
-              failed_images+=("$source -> $full_target")
-            fi
-          done
+          echo ""
+          echo "镜像总数: $idx"
           
           # 输出结果
           echo "========================================"
@@ -165,3 +147,4 @@ jobs:
           else
             echo "✅ 所有镜像同步成功"
           fi
+

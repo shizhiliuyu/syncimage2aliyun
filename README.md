@@ -82,9 +82,15 @@ npm start
 ### 4. 配置企业微信回调
 
 在[企业微信管理后台](https://work.weixin.qq.com/)配置：
-- 回调 URL: `http://your-domain.com:port/wechat/callback`
-- Token: 从 .env 读取
-- EncodingAESKey: 从 .env 读取
+- **回调 URL**: `http://your-domain.com:port/wechat/callback`
+- **Token**: 与 `.env` 中的 `WECHAT_TOKEN` 完全一致
+- **接收消息模式**: 选择"明文模式"（不要选"安全模式"）
+- **EncodingAESKey**: 留空即可（如果使用明文模式）
+
+⚠️ **重要**：
+1. Token 必须与 `.env` 中的 `WECHAT_TOKEN` 完全一致
+2. 接收消息模式必须选择"明文模式"，否则验证会失败
+3. 配置保存后会自动验证回调 URL
 
 ### 5. 使用
 
@@ -267,3 +273,4 @@ docker-compose logs -f
 ## 许可证
 
 MIT
+

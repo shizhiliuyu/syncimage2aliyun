@@ -6,26 +6,12 @@
 # 示例：同步 Nginx 镜像
 # nginx:latest to registry.cn-hangzhou.aliyuncs.com/my-namespace/nginx:latest
 
-# 示例：指定平台架构
-# --platform=linux/amd64 nginx:latest to registry.cn-hangzhou.aliyuncs.com/my-namespace/nginx:amd64
-
 # 示例：同步多个标签
 # redis:6.2 to registry.cn-hangzhou.aliyuncs.com/my-namespace/redis:6.2
 # redis:7.0 to registry.cn-hangzhou.aliyuncs.com/my-namespace/redis:7.0
 
-# 示例：私有仓库镜像（需要添加 pull 前缀）
-# pull gcr.io/google-containers/pause:3.9 to registry.cn-hangzhou.aliyuncs.com/my-namespace/pause:3.9
-
-# 常用的国外镜像到阿里云示例（请根据实际情况修改命名空间）
-# 基础镜像
-# alpine:latest to registry.cn-hangzhou.aliyuncs.com/shrimp-images/alpine:latest
-# ubuntu:latest to registry.cn-hangzhou.aliyuncs.com/shrimp-images/ubuntu:latest
-
-# 应用镜像
-# mysql:8.0 to registry.cn-hangzhou.aliyuncs.com/shrimp-images/mysql:8.0
-# redis:latest to registry.cn-hangzhou.aliyuncs.com/shrimp-images/redis:latest
-
 # K8s 相关镜像（需要指定架构）
-# --platform=linux/amd64 k8s.gcr.io/pause:3.9 to registry.cn-hangzhou.aliyuncs.com/shrimp-images/pause:3.9
-# --platform=linux/arm64 k8s.gcr.io/pause:3.9 to registry.cn-hangzhou.aliyuncs.com/shrimp-images/pause:3.9-arm64
+# --platform=linux/amd64 k8s.gcr.io/pause:3.9
+# --platform=linux/arm64 k8s.gcr.io/pause:3.9
+
 

@@ -5,12 +5,9 @@ services:
     build: .
     container_name: image-sync-service
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT:-3000}:${PORT:-3000}"
     env_file:
       - .env
-    volumes:
-      - ./images.txt:/app/images.txt
-      - ./.git:/app/.git
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
@@ -18,4 +15,3 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-
