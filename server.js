@@ -597,37 +597,74 @@ app.post('/wechat/callback', async (req, res) => {
         await sendWeChatMessage(fromUser, confirmMsg);
         
         try {
-          // 添加所有镜像到 images.txt
-          const skipped = [];
-          const added = [];
+          // 使用文件锁机制处理并发
+          const lockFile = path.join(__dirname, 'images.txt.lock');
+          const maxRetries = 10;
+          let retries = 0;
           
-          for (const imageInfo of imagesList) {
-            console.log('处理镜像:', JSON.stringify(imageInfo, null, 2));
-            const addResult = addImageToFile(imageInfo);
-            if (addResult.added) {
-              added.push(imageInfo.sourceImage);
-            } else {
-              skipped.push(imageInfo.sourceImage);
-            }
+          // 获取锁
+          while (fs.existsSync(lockFile) && retries < maxRetries) {
+            console.log(`⏳ 等待文件锁释放... (重试 ${retries}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            retries++;
           }
           
-          // 打印最终写入的内容
-          const finalContent = fs.readFileSync('images.txt', 'utf8');
-          console.log('📄 images.txt 最终内容:');
-          console.log(finalContent);
-          console.log('📄 文件行数:', finalContent.split('\n').length);
-          
-          if (added.length === 0) {
-            await sendWeChatMessage(fromUser, `⚠️ 所有镜像均已存在`);
+          if (retries >= maxRetries) {
+            await sendWeChatMessage(fromUser, `⚠️ 系统繁忙，请稍后重试`);
             res.send('success');
             return;
           }
           
-          // 构建提交信息
-          const commitMessage = `feat: 添加 ${added.length} 个镜像同步${isMultiple ? '任务' : ''}\n\n${added.join('\n')}`;
+          // 创建锁文件
+          fs.writeFileSync(lockFile, process.pid.toString());
+          console.log('🔒 获取文件锁成功');
           
-          // 使用 GitHub API 更新文件
-          await updateGitHubFile(commitMessage);
+          try {
+            // 添加所有镜像到 images.txt
+            const skipped = [];
+            const added = [];
+            
+            for (const imageInfo of imagesList) {
+              console.log('处理镜像:', JSON.stringify(imageInfo, null, 2));
+              const addResult = addImageToFile(imageInfo);
+              if (addResult.added) {
+                added.push(imageInfo.sourceImage);
+              } else {
+                skipped.push(imageInfo.sourceImage);
+              }
+            }
+            
+            // 打印最终写入的内容
+            const finalContent = fs.readFileSync('images.txt', 'utf8');
+            console.log('📄 images.txt 最终内容:');
+            console.log(finalContent);
+            console.log('📄 文件行数:', finalContent.split('\n').length);
+            
+            if (added.length === 0) {
+              await sendWeChatMessage(fromUser, `⚠️ 所有镜像均已存在`);
+              res.send('success');
+              return;
+            }
+            
+            // 构建提交信息
+            const commitMessage = `feat: 添加 ${added.length} 个镜像同步${isMultiple ? '任务' : ''}\n\n${added.join('\n')}`;
+            
+            // 读取当前 images.txt 内容
+            const currentContent = fs.readFileSync('images.txt', 'utf8');
+            
+            // 使用 GitHub API 更新文件
+            await updateGitHubFile(commitMessage);
+            
+            // 上传成功后立即清空 images.txt（避免重复拉取）
+            fs.writeFileSync('images.txt', '', 'utf8');
+            console.log('🗑️  已清空 images.txt，避免重复拉取');
+          } finally {
+            // 释放锁
+            if (fs.existsSync(lockFile)) {
+              fs.unlinkSync(lockFile);
+              console.log('🔓 释放文件锁');
+            }
+          }
           
           // 发送成功消息
           let successMsg = `✅ 已添加 ${added.length} 个镜像到同步队列\n\n`;

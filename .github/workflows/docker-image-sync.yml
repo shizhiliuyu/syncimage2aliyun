@@ -31,11 +31,10 @@ jobs:
           cat images.txt
           echo ""
           
-          failed_images=()
-          success_images=()
-          
-          # 读取并处理每一行
+          # 收集镜像列表
+          images_list=()
           idx=0
+          
           while IFS= read -r line; do
             # 跳过空行和注释
             if [[ -z "$line" ]] || [[ "$line" =~ ^[[:space:]]*# ]]; then
@@ -55,75 +54,92 @@ jobs:
               target="${BASH_REMATCH[2]}"
               tag="${BASH_REMATCH[3]}"
               
-              idx=$((idx + 1))
-              full_target="${target}:${tag}"
-              
-              echo ""
-              echo "========================================"
-              echo "正在同步镜像 $idx: $source -> $full_target"
-              [[ -n "$platform" ]] && echo "指定平台: $platform"
-              echo "========================================"
-              
-              # 拉取镜像
-              if [[ -n "$platform" ]]; then
-                if docker pull --platform="$platform" "$source"; then
-                  echo "✅ 拉取成功: $source"
-                else
-                  echo "❌ 拉取失败: $source"
-                  failed_images+=("$source -> $full_target")
-                  continue
-                fi
-              else
-                if docker pull "$source"; then
-                  echo "✅ 拉取成功: $source"
-                else
-                  echo "❌ 拉取失败: $source"
-                  failed_images+=("$source -> $full_target")
-                  continue
-                fi
-              fi
-              
-              # 标记镜像
-              if docker tag "$source" "$full_target"; then
-                echo "✅ 标记成功: $full_target"
-              else
-                echo "❌ 标记失败: $full_target"
-                failed_images+=("$source -> $full_target")
-                continue
-              fi
-              
-              # 推送镜像
-              if docker push "$full_target"; then
-                echo "✅ 推送成功: $full_target"
-                success_images+=("$source -> $full_target")
-              else
-                echo "❌ 推送失败: $full_target"
-                failed_images+=("$source -> $full_target")
-              fi
+              images_list+=("${source}|${target}|${tag}|${platform}")
+              echo "收集镜像 $((++idx)): $source -> ${target}:${tag}"
             fi
           done < images.txt
           
           echo ""
-          echo "镜像总数: $idx"
+          echo "镜像总数: ${#images_list[@]}"
+          echo "开始并发同步..."
           
-          # 输出结果
+          # 并发同步函数
+          sync_image() {
+            local image_info="$1"
+            local source=$(echo "$image_info" | cut -d'|' -f1)
+            local target=$(echo "$image_info" | cut -d'|' -f2)
+            local tag=$(echo "$image_info" | cut -d'|' -f3)
+            local platform=$(echo "$image_info" | cut -d'|' -f4)
+            local full_target="${target}:${tag}"
+            
+            echo ""
+            echo "[$(date +%T)] 开始同步: $source -> $full_target"
+            [[ -n "$platform" ]] && echo "[$(date +%T)] 指定平台: $platform"
+            
+            local result=""
+            
+            # 拉取镜像
+            if [[ -n "$platform" ]]; then
+              if docker pull --platform="$platform" "$source" 2>&1; then
+                result="SUCCESS"
+              else
+                result="FAILED_PULL"
+              fi
+            else
+              if docker pull "$source" 2>&1; then
+                result="SUCCESS"
+              else
+                result="FAILED_PULL"
+              fi
+            fi
+            
+            if [[ "$result" != "FAILED_PULL" ]]; then
+              # 标记镜像
+              if docker tag "$source" "$full_target" 2>&1; then
+                # 推送镜像
+                if docker push "$full_target" 2>&1; then
+                  echo "[$(date +%T)] ✅ 成功: $full_target"
+                  echo "SUCCESS:$source -> $full_target"
+                else
+                  echo "[$(date +%T)] ❌ 推送失败: $full_target"
+                  echo "FAILED_PUSH:$source -> $full_target"
+                fi
+              else
+                echo "[$(date +%T)] ❌ 标记失败: $full_target"
+                echo "FAILED_TAG:$source -> $full_target"
+              fi
+            else
+              echo "[$(date +%T)] ❌ 拉取失败: $source"
+              echo "FAILED_PULL:$source -> $full_target"
+            fi
+          }
+          
+          # 并发处理，导出函数供子进程使用
+          export -f sync_image
+          
+          # 记录成功和失败
+          failed_images=()
+          success_images=()
+          
+          # 使用临时文件收集结果
+          temp_results=$(mktemp)
+          
+          # 使用 xargs 并发处理（最大4个并发）
+          printf '%s\n' "${images_list[@]}" | xargs -n1 -P4 -I{} bash -c 'sync_image "$@"' _ {} | tee "$temp_results"
+          
+          # 统计成功和失败
+          success_count=$(grep -c "^SUCCESS:" "$temp_results" 2>/dev/null || echo "0")
+          failed_count=$(grep -c "^FAILED" "$temp_results" 2>/dev/null || echo "0")
+          
+          # 简化：直接输出统计
           echo "========================================"
           echo "镜像同步完成"
-          echo "成功: ${#success_images[@]}"
-          echo "失败: ${#failed_images[@]}"
+          echo "成功: ${success_count}"
+          echo "失败: ${failed_count}"
           echo "========================================"
           
-          if [ ${#failed_images[@]} -gt 0 ]; then
-            echo "失败的镜像："
-            for img in "${failed_images[@]}"; do
-              echo "  ❌ $img"
-            done
-            
-            # 设置输出
+          if [ "$failed_count" -gt 0 ]; then
             echo "failed=true" >> $GITHUB_OUTPUT
-            echo "failed_list=${failed_images[*]}" >> $GITHUB_OUTPUT
-            
-            # 退出失败
             exit 1
           else
             echo "所有镜像同步成功！"
