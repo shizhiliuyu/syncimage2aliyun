@@ -12,6 +12,9 @@ const path = require('path');
 const xml2js = require('xml2js');
 const app = express();
 
+// 全局任务状态管理
+let isTaskProcessing = false;
+
 // 中间件：解析 XML 请求
 app.use('/wechat/callback', express.text({ type: ['text/xml', 'application/xml'] }));
 app.use(express.json());
@@ -386,56 +389,80 @@ async function getGitHubActionsLogs(runId) {
     // 查找 sync-images job
     for (const job of jobs) {
       console.log('检查 job:', job.name, 'status:', job.status, 'conclusion:', job.conclusion);
+      console.log('job 完整对象:', JSON.stringify(job, null, 2));
       
       if (job.name === 'sync-images' && job.status === 'completed') {
-        console.log('找到 sync-images job，logs_url:', job.logs_url);
+        console.log('找到 sync-images job，尝试获取日志...');
         
-        // 尝试获取日志内容
-        if (job.logs_url) {
+        // 尝试从 job ID 获取日志
+        if (job.id) {
           try {
-            // 从 logs_url 获取日志
-            const logResponse = await axios.get(job.logs_url, {
-              headers: {
-                'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
-              },
-              responseType: 'text',
-              timeout: 15000,
-              maxContentLength: 50 * 1024 * 1024, // 50MB
-            });
+            // 方式1: 使用 run 的 logs_url
+            console.log('尝试使用 run 的 logs_url:', run.logs_url);
             
-            const logContent = logResponse.data;
-            console.log('✅ 成功获取日志，长度:', logContent.length);
-            console.log('日志前500字符:', logContent.substring(0, 500));
-            
-            // 解析日志中的成功和失败信息
-            // 使用多行匹配，处理换行
-            const successPattern = /SUCCESS:(.+?)(?=SUCCESS:|FAILED:|$)/gs;
-            const failedPattern = /FAILED:(.+?)(?=SUCCESS:|FAILED:|$)/gs;
-            
-            const successMatches = Array.from(logContent.matchAll(successPattern));
-            const failedMatches = Array.from(logContent.matchAll(failedPattern));
-            
-            console.log('Success matches:', successMatches.length);
-            console.log('Failed matches:', failedMatches.length);
-            
-            if (successMatches.length > 0) {
-              successList.push(...successMatches.map(m => m[1].trim().replace(/\n/g, ' ')));
-              console.log('解析到的成功记录:', successList);
+            if (run.logs_url) {
+              // 尝试直接获取日志（非压缩格式）
+              const logResponse = await axios.get(run.logs_url, {
+                headers: {
+                  'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
+                  'Accept': 'application/vnd.github.v3+json',
+                },
+                responseType: 'arraybuffer', // 先作为二进制接收
+                timeout: 15000,
+                maxContentLength: 50 * 1024 * 1024, // 50MB
+              });
+              
+              // 检查是否是 gzip 压缩
+              const buffer = Buffer.from(logResponse.data);
+              console.log('收到日志数据，大小:', buffer.length, '字节');
+              
+              let logContent = '';
+              
+              // 检查是否是 gzip
+              if (buffer[0] === 0x1f && buffer[1] === 0x8b) {
+                console.log('检测到 gzip 压缩，开始解压...');
+                const zlib = require('zlib');
+                logContent = zlib.gunzipSync(buffer).toString('utf8');
+              } else {
+                logContent = buffer.toString('utf8');
+              }
+              
+              console.log('✅ 成功获取日志，长度:', logContent.length);
+              console.log('日志前500字符:', logContent.substring(0, 500));
+              
+              // 解析日志中的成功和失败信息
+              const lines = logContent.split('\n');
+              console.log('总行数:', lines.length);
+              
+              // 查找包含 SUCCESS: 或 FAILED: 的行
+              for (const line of lines) {
+                if (line.includes('SUCCESS:')) {
+                  const match = line.match(/SUCCESS:(.+)/);
+                  if (match) {
+                    successList.push(match[1].trim());
+                  }
+                } else if (line.includes('FAILED:')) {
+                  const match = line.match(/FAILED:(.+)/);
+                  if (match) {
+                    failedList.push(match[1].trim());
+                  }
+                }
+              }
+              
+              console.log('解析到成功记录:', successList.length, '条');
+              console.log('解析到失败记录:', failedList.length, '条');
+              
+              if (successList.length > 0) {
+                console.log('成功列表:', successList);
+              }
+              if (failedList.length > 0) {
+                console.log('失败列表:', failedList);
+              }
             }
-            if (failedMatches.length > 0) {
-              failedList.push(...failedMatches.map(m => m[1].trim().replace(/\n/g, ' ')));
-              console.log('解析到的失败记录:', failedList);
-            }
-            
-            // 也尝试简单的行匹配
-            const lineMatches = logContent.split('\n').filter(line => 
-              line.includes('SUCCESS:') || line.includes('FAILED:')
-            );
-            console.log('包含 SUCCESS/FAILED 的行数:', lineMatches.length);
-            
           } catch (logError) {
             console.log('❌ 无法获取日志:', logError.message);
             console.log('Error response:', logError.response?.status, logError.response?.statusText);
+            console.log('Error data:', logError.response?.data?.substring(0, 500));
           }
         }
         
@@ -443,7 +470,7 @@ async function getGitHubActionsLogs(runId) {
           success: successList,
           failed: failedList,
           conclusion: job.conclusion,
-          logs_url: job.logs_url
+          logs_url: run.logs_url
         };
       }
     }
@@ -689,30 +716,42 @@ app.post('/wechat/callback', async (req, res) => {
       const imagesList = parseMessage(content);
       
       if (imagesList && imagesList.length > 0) {
-        const totalImages = imagesList.length;
-        const isMultiple = totalImages > 1;
-        
-        console.log(`解析到 ${totalImages} 个镜像信息:`, imagesList);
-        
-        // 构建确认消息
-        let confirmMsg = `🔄 正在处理镜像同步请求...\n\n`;
-        if (isMultiple) {
-          confirmMsg += `共 ${totalImages} 个镜像：\n\n`;
-          imagesList.forEach((img, index) => {
-            confirmMsg += `${index + 1}. ${img.sourceImage} → ${img.targetImage}:${img.tag}\n`;
-          });
-        } else {
-          const img = imagesList[0];
-          confirmMsg += `📥 源镜像: ${img.sourceImage}\n`;
-          confirmMsg += `📤 目标镜像: ${img.targetImage}:${img.tag}\n`;
-          if (img.platform) {
-            confirmMsg += `🏗️  平台: ${img.platform}\n`;
-          }
+        // 检查是否有正在进行的任务
+        if (isTaskProcessing) {
+          console.log('⚠️ 检测到正在进行的任务，拒绝新请求');
+          await sendWeChatMessage(fromUser, `⚠️ 已有任务正在处理中，请稍后再试`);
+          res.send('success');
+          return;
         }
         
-        await sendWeChatMessage(fromUser, confirmMsg);
+        // 设置任务处理标志
+        isTaskProcessing = true;
+        console.log('🔒 设置任务处理标志为 true');
         
         try {
+          const totalImages = imagesList.length;
+          const isMultiple = totalImages > 1;
+          
+          console.log(`解析到 ${totalImages} 个镜像信息:`, imagesList);
+          
+          // 构建确认消息
+          let confirmMsg = `🔄 正在处理镜像同步请求...\n\n`;
+          if (isMultiple) {
+            confirmMsg += `共 ${totalImages} 个镜像：\n\n`;
+            imagesList.forEach((img, index) => {
+              confirmMsg += `${index + 1}. ${img.sourceImage} → ${img.targetImage}:${img.tag}\n`;
+            });
+          } else {
+            const img = imagesList[0];
+            confirmMsg += `📥 源镜像: ${img.sourceImage}\n`;
+            confirmMsg += `📤 目标镜像: ${img.targetImage}:${img.tag}\n`;
+            if (img.platform) {
+              confirmMsg += `🏗️  平台: ${img.platform}\n`;
+            }
+          }
+          
+          await sendWeChatMessage(fromUser, confirmMsg);
+          
           // 添加所有镜像到 images.txt
           const skipped = [];
           const added = [];
@@ -735,6 +774,8 @@ app.post('/wechat/callback', async (req, res) => {
           
           if (added.length === 0) {
             await sendWeChatMessage(fromUser, `⚠️ 所有镜像均已存在`);
+            isTaskProcessing = false;
+            console.log('🔓 镜像已存在，清除任务处理标志');
             res.send('success');
             return;
           }
@@ -756,6 +797,8 @@ app.post('/wechat/callback', async (req, res) => {
           
           if (retries >= maxRetries) {
             await sendWeChatMessage(fromUser, `⚠️ 系统繁忙，请稍后重试`);
+            isTaskProcessing = false;
+            console.log('🔓 系统繁忙，清除任务处理标志');
             res.send('success');
             return;
           }
@@ -788,53 +831,16 @@ app.post('/wechat/callback', async (req, res) => {
               
               let resultMsg = '';
               
-              // 尝试获取详细的运行输出
-              let successList = [];
-              let failedList = [];
-              
-              if (result.conclusion === 'failure') {
-                // 只有失败时才尝试获取详细日志
-                console.log('尝试获取失败时的详细日志...');
-                try {
-                  const logResult = await getGitHubActionsLogs(result.id);
-                  console.log('日志获取结果:', JSON.stringify(logResult, null, 2));
-                  
-                  if (logResult.success && logResult.success.length > 0) {
-                    successList = logResult.success;
-                  }
-                  if (logResult.failed && logResult.failed.length > 0) {
-                    failedList = logResult.failed;
-                  }
-                } catch (error) {
-                  console.log('获取详细结果失败:', error.message);
-                }
-              }
-              
               // 构建消息
               if (result.conclusion === 'success') {
                 resultMsg = `✅ 镜像同步完成！\n\n📊 已同步: ${added.length} 个镜像\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}`;
               } else if (result.conclusion === 'failure') {
-                // 部分成功的情况
-                if (successList.length > 0) {
-                  resultMsg = `⚠️ 镜像同步部分失败\n\n`;
-                  
-                  resultMsg += `✅ 成功 ${successList.length} 个:\n`;
-                  successList.forEach(img => {
-                    resultMsg += `   • ${img}\n`;
-                  });
-                  
-                  if (failedList.length > 0) {
-                    resultMsg += `\n❌ 失败 ${failedList.length} 个:\n`;
-                    failedList.forEach(img => {
-                      resultMsg += `   • ${img}\n`;
-                    });
-                  }
-                  
-                  resultMsg += `\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}`;
-                } else {
-                  // 全部失败
-                  resultMsg = `❌ 镜像同步失败！\n\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}\n\n请检查错误日志。`;
-                }
+                // 失败时显示所有请求的镜像
+                resultMsg = `❌ 镜像同步失败\n\n📤 请求同步的镜像:\n`;
+                imagesList.forEach((img, index) => {
+                  resultMsg += `${index + 1}. ${img.sourceImage} → ${img.targetImage}:${img.tag}\n`;
+                });
+                resultMsg += `\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}\n\n请查看 GitHub Actions 日志确认具体失败原因`;
               } else {
                 resultMsg = `⏳ 镜像同步超时（执行时间超过5分钟）\n\n🔗 查看详情: ${result.html_url}`;
               }
@@ -842,12 +848,19 @@ app.post('/wechat/callback', async (req, res) => {
               await sendWeChatMessage(fromUser, resultMsg);
             } catch (error) {
               console.error('获取执行结果时出错:', error);
+            } finally {
+              // 无论成功还是失败，都要清除任务标志
+              isTaskProcessing = false;
+              console.log('🔓 清除任务处理标志');
             }
           }, 5000); // 延迟5秒后开始检查
           
         } catch (error) {
           console.error('处理镜像同步时出错:', error);
           await sendWeChatMessage(fromUser, `❌ 处理镜像同步时出错:\n${error.message}\n\n请检查配置或稍后重试。`);
+          // 出错时也要清除标志
+          isTaskProcessing = false;
+          console.log('🔓 处理出错，清除任务处理标志');
         }
       } else {
         // 返回使用说明
