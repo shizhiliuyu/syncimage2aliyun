@@ -350,6 +350,60 @@ async function getGitHubActionsStatus(runId) {
   }
 }
 
+// 获取 GitHub Actions 运行日志
+async function getGitHubActionsLogs(runId) {
+  try {
+    // 首先获取 run 信息
+    const runUrl = `https://api.github.com/repos/${CONFIG.GITHUB_REPO}/actions/runs/${runId}`;
+    const runResponse = await axios.get(runUrl, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+      }
+    });
+    
+    const run = runResponse.data;
+    
+    // 获取 job 信息
+    const jobsUrl = `https://api.github.com/repos/${CONFIG.GITHUB_REPO}/actions/runs/${runId}/jobs`;
+    const jobsResponse = await axios.get(jobsUrl, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+      }
+    });
+    
+    const jobs = jobsResponse.data.jobs || [];
+    
+    // 查找 sync-images job
+    for (const job of jobs) {
+      if (job.name === 'sync-images' && job.status === 'completed') {
+        return {
+          success: [],
+          failed: [],
+          conclusion: job.conclusion,
+          logs_url: job.logs_url
+        };
+      }
+    }
+    
+    return {
+      success: [],
+      failed: [],
+      conclusion: run.conclusion,
+      logs_url: null
+    };
+  } catch (error) {
+    console.error('获取 Actions 日志失败:', error.message);
+    return {
+      success: [],
+      failed: [],
+      conclusion: 'failure',
+      logs_url: null
+    };
+  }
+}
+
 // 等待 GitHub Actions 完成（最多等待5分钟）
 async function waitForActionsComplete(timeout = 300000) {
   const startTime = Date.now();
@@ -375,6 +429,7 @@ async function waitForActionsComplete(timeout = 300000) {
             conclusion: latestRun.conclusion,
             html_url: latestRun.html_url,
             run_number: latestRun.run_number,
+            id: latestRun.id,
           };
         }
       }
@@ -663,14 +718,7 @@ app.post('/wechat/callback', async (req, res) => {
             }
           }
           
-          // 发送成功消息
-          let successMsg = `✅ 已添加 ${added.length} 个镜像到同步队列\n\n`;
-          if (skipped.length > 0) {
-            successMsg += `⚠️ 跳过 ${skipped.length} 个已存在镜像\n\n`;
-          }
-          successMsg += `📝 提交信息: ${added.length} 个镜像\n\nGitHub Action 已自动触发，正在执行镜像拉取和推送操作...`;
-          
-          await sendWeChatMessage(fromUser, successMsg);
+          // 不再发送中间确认消息，直接等待 GitHub Actions 完成
           
           // 等待 GitHub Actions 完成（异步，不阻塞响应）
           setTimeout(async () => {
@@ -678,10 +726,73 @@ app.post('/wechat/callback', async (req, res) => {
               const result = await waitForActionsComplete(300000); // 最多等待5分钟
               
               let resultMsg = '';
+              
+              // 尝试获取详细的运行输出
+              let successList = [];
+              let failedList = [];
+              
+              if (result.conclusion === 'failure') {
+                // 只有失败时才尝试获取详细日志
+                try {
+                  const logResult = await getGitHubActionsLogs(result.id);
+                  
+                  // 尝试从 logs_url 获取日志（如果可用）
+                  if (logResult.logs_url) {
+                    try {
+                      const logResponse = await axios.get(logResult.logs_url, {
+                        headers: {
+                          'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
+                        },
+                        responseType: 'text',
+                        timeout: 10000
+                      });
+                      
+                      const logContent = logResponse.data;
+                      
+                      // 解析日志中的成功和失败信息
+                      const successMatches = logContent.match(/^SUCCESS:(.+)$/gm);
+                      const failedMatches = logContent.match(/^FAILED:(.+)$/gm);
+                      
+                      if (successMatches) {
+                        successList = successMatches.map(m => m.replace(/^SUCCESS:/, '').trim());
+                      }
+                      if (failedMatches) {
+                        failedList = failedMatches.map(m => m.replace(/^FAILED:/, '').trim());
+                      }
+                    } catch (logError) {
+                      console.log('无法解析日志内容:', logError.message);
+                    }
+                  }
+                } catch (error) {
+                  console.log('获取详细结果失败:', error.message);
+                }
+              }
+              
+              // 构建消息
               if (result.conclusion === 'success') {
                 resultMsg = `✅ 镜像同步完成！\n\n📊 已同步: ${added.length} 个镜像\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}`;
               } else if (result.conclusion === 'failure') {
-                resultMsg = `❌ 镜像同步失败！\n\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}\n\n请检查错误日志。`;
+                // 部分成功的情况
+                if (successList.length > 0) {
+                  resultMsg = `⚠️ 镜像同步部分失败\n\n`;
+                  
+                  resultMsg += `✅ 成功 ${successList.length} 个:\n`;
+                  successList.forEach(img => {
+                    resultMsg += `   • ${img}\n`;
+                  });
+                  
+                  if (failedList.length > 0) {
+                    resultMsg += `\n❌ 失败 ${failedList.length} 个:\n`;
+                    failedList.forEach(img => {
+                      resultMsg += `   • ${img}\n`;
+                    });
+                  }
+                  
+                  resultMsg += `\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}`;
+                } else {
+                  // 全部失败
+                  resultMsg = `❌ 镜像同步失败！\n\n📊 运行编号: #${result.run_number}\n🔗 查看详情: ${result.html_url}\n\n请检查错误日志。`;
+                }
               } else {
                 resultMsg = `⏳ 镜像同步超时（执行时间超过5分钟）\n\n🔗 查看详情: ${result.html_url}`;
               }

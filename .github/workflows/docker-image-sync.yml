@@ -165,6 +165,22 @@ jobs:
             grep "^FAILED:" "$temp_results" || true
           fi
           
+          # 显示成功的镜像
+          if [[ $success_count -gt 0 ]]; then
+            echo ""
+            echo "成功的镜像："
+            grep "^SUCCESS:" "$temp_results" || true
+          fi
+          
+          # 保存详细结果到文件
+          echo "success_images<<EOF" >> $GITHUB_OUTPUT
+          grep "^SUCCESS:" "$temp_results" 2>/dev/null || echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "failed_images<<EOF" >> $GITHUB_OUTPUT
+          grep "^FAILED:" "$temp_results" 2>/dev/null || echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
           # 清理临时文件
           rm -f "$temp_results"
           
