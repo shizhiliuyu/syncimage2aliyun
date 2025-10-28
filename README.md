@@ -5,27 +5,30 @@
 ## 功能特性
 
 - ✅ **简化输入** - 只需发送镜像名称，目标仓库自动配置
-- ✅ 支持单个或多个镜像（逗号、空格、换行分隔）
-- ✅ 支持指定平台架构（linux/amd64, linux/arm64）
-- ✅ 自动 Git 提交和推送
-- ✅ 触发 GitHub Action 执行同步
-- ✅ 自动返回执行结果
-- ✅ 简单内存缓存优化
+- ✅ **多镜像支持** - 支持单个或多个镜像（逗号、空格、换行分隔）
+- ✅ **平台架构** - 支持指定平台架构（linux/amd64, linux/arm64）
+- ✅ **自动提交** - 自动使用 GitHub API 更新镜像列表
+- ✅ **并发处理** - 后台并发处理多个镜像同步任务
+- ✅ **实时反馈** - 自动返回执行结果（成功/失败/超时）
+- ✅ **任务队列** - 防止并发冲突，同一时间只处理一个任务
+- ✅ **文件缓存** - Token 缓存优化，减少 API 调用
+- ✅ **定时清理** - 每天凌晨自动重置镜像列表
 
 ## 工作流程
 
 ```
 企业微信消息 
   ↓
-解析命令并添加到 images.txt
-  ↓
-Git Push 到 GitHub 
+解析命令并更新 images.txt（通过 GitHub API）
   ↓
 触发 GitHub Action（监听 images.txt 文件变更）
   ↓
-GitHub Action 自动执行镜像 pull/tag/push 
+GitHub Action 并发执行镜像 pull/tag/push 
   ↓
-企业微信返回执行结果（成功/失败）
+企业微信返回执行结果
+  ├─ ✅ 成功：显示同步成功的镜像列表
+  ├─ ❌ 失败：显示失败的镜像和错误原因
+  └─ ⏳ 超时：提示查看详情链接
 ```
 
 ## 快速开始
@@ -84,29 +87,33 @@ npm start
 在[企业微信管理后台](https://work.weixin.qq.com/)配置：
 - **回调 URL**: `http://your-domain.com:port/wechat/callback`
 - **Token**: 与 `.env` 中的 `WECHAT_TOKEN` 完全一致
-- **接收消息模式**: 选择"明文模式"（不要选"安全模式"）
-- **EncodingAESKey**: 留空即可（如果使用明文模式）
 
 ⚠️ **重要**：
 1. Token 必须与 `.env` 中的 `WECHAT_TOKEN` 完全一致
-2. 接收消息模式必须选择"明文模式"，否则验证会失败
+2. **必须选择"明文模式"**，否则验证会失败
 3. 配置保存后会自动验证回调 URL
+4. 验证成功后，配置将自动保存
 
-### 5. 使用
+### 5. 使用方式
+
+#### 支持的输入格式
 
 **单个镜像：**
 ```
 nginx:latest
+nginx              # 自动添加 :latest
 ```
 
 **多个镜像（逗号分隔）：**
 ```
 nginx, redis, mysql
+nginx:latest, redis:7.0, mysql:8.0
 ```
 
 **多个镜像（空格分隔）：**
 ```
 nginx redis mysql
+nginx:latest redis:7.0 mysql:8.0
 ```
 
 **多个镜像（换行）：**
@@ -116,25 +123,58 @@ redis:7.0
 mysql:8.0
 ```
 
-**指定平台：**
+**指定平台架构：**
 ```
 --platform=linux/amd64 nginx:latest
+--platform=linux/arm64 redis:7.0
 ```
+
+**组合使用：**
+```
+--platform=linux/amd64 nginx redis mysql
+```
+
+#### 消息反馈
+
+系统会自动发送 2 条消息：
+
+1. **收到请求时**：确认镜像列表
+   ```
+   🔄 正在处理镜像同步请求...
+   共 3 个镜像：
+   1. nginx:latest → registry.cn-hangzhou.aliyuncs.com/namespace/nginx:latest
+   2. redis:7.0 → registry.cn-hangzhou.aliyuncs.com/namespace/redis:7.0
+   3. mysql:8.0 → registry.cn-hangzhou.aliyuncs.com/namespace/mysql:8.0
+   ```
+
+2. **完成后**：返回执行结果
+   - ✅ 成功：显示同步成功的镜像数量
+   - ❌ 失败：显示失败的镜像列表和错误原因
+   - ⏳ 超时：提示查看详情
 
 ## 项目结构
 
 ```
 .
 ├── .github/workflows/
-│   └── docker-image-sync.yml    # GitHub Action 工作流
-├── server.js                     # 核心服务
-├── package.json                  # 项目配置
+│   └── docker-image-sync.yml     # GitHub Action 工作流
+├── server.js                     # 核心服务（处理企业微信回调）
+├── package.json                  # Node.js 依赖
 ├── images.txt                    # 镜像同步列表
-├── env.example                   # 环境变量示例
-├── Dockerfile                    # Docker 配置
-├── docker-compose.yml            # Compose 配置
+├── env.example                   # 环境变量模板
+├── Dockerfile                    # Docker 镜像配置
+├── docker-compose.yml            # Docker Compose 配置
+├── docker-entrypoint.sh          # 容器启动脚本
 └── README.md                     # 本文档
 ```
+
+## 技术架构
+
+- **服务端**: Node.js + Express.js
+- **消息处理**: 企业微信回调 + AES 解密
+- **镜像同步**: GitHub Actions + Docker
+- **存储**: GitHub API（直接更新文件）
+- **并发控制**: 文件锁 + 任务状态管理
 
 ## 配置说明
 
@@ -249,26 +289,126 @@ alpine:3.18 ubuntu:22.04
 ## 故障排查
 
 ### 回调验证失败
+
+**症状**：企业微信后台提示"回调验证失败"
+
+**解决方案**：
+1. 检查 `.env` 中的 `WECHAT_TOKEN` 是否与企业微信后台配置一致
+2. 确保选择了"明文模式"（不是"安全模式"）
+3. 查看服务器日志：
+   ```bash
+   docker-compose logs -f
+   ```
+4. 验证回调 URL 是否可访问
+
+### 镜像同步失败
+
+**症状**：GitHub Actions 执行失败
+
+**检查项**：
+1. GitHub Secrets 配置是否正确
+   - `DOCKER_USERNAME`
+   - `DOCKER_PASSWORD`
+   - `DOCKER_REGISTRY`
+2. 镜像名称是否正确（不存在或网络问题）
+3. 查看 GitHub Actions 日志：
+   ```
+   https://github.com/owner/repo/actions
+   ```
+
+### 任务冲突
+
+**症状**：提示"已有任务正在处理中"
+
+**说明**：系统同一时间只处理一个任务，请等待当前任务完成后再试
+
+**解决**：
+- 等待 5-10 分钟后再发送新请求
+- 查看当前任务的 GitHub Actions 运行状态
+
+### 服务健康检查
+
 ```bash
-# 检查 Token 是否正确
+# 检查服务状态
 curl http://localhost:3000/health
 
 # 查看日志
-docker-compose logs -f
+docker-compose logs -f image-sync
+
+# 查看容器状态
+docker-compose ps
 ```
 
-### Git Push 失败
-- 检查 GitHub Token 权限
-- 确认仓库配置正确
-- 查看服务日志
+## 高级配置
 
-### 镜像同步失败
-- 检查 Docker 凭据
-- 查看 GitHub Actions 日志
+### 内网穿透（FRP）
+
+如果服务器在内网，需要使用 FRP 进行内网穿透：
+
+1. **FRP 服务端（公网服务器）配置**：
+   ```ini
+   [common]
+   bind_port = 7000
+   ```
+
+2. **FRP 客户端（内网服务器）配置**：
+   ```ini
+   [common]
+   server_addr = your-frps-ip
+   server_port = 7000
+   
+   [web]
+   type = tcp
+   local_ip = 127.0.0.1
+   local_port = 3000
+   remote_port = 30000
+   ```
+
+3. **企业微信回调配置**：
+   - 回调 URL: `http://your-frps-ip:30000/wechat/callback`
+
+### 定时任务
+
+系统会在每天凌晨 00:00:00 自动：
+1. 将当前的 `images.txt` 内容上传到 GitHub
+2. 重置本地的 `images.txt` 为空
+
+这确保每天有一个干净的同步列表。
+
+## 性能优化
+
+- **Token 缓存**：企业微信 access_token 缓存 7000 秒
+- **任务队列**：单任务处理，防止并发冲突
+- **并发同步**：GitHub Action 使用后台并发处理镜像
+- **文件锁**：防止多请求同时修改 `images.txt`
+
+## 限制说明
+
+- **API 调用频率**：
+  - 企业微信：每分钟最多 600 次
+  - GitHub：根据账号级别有不同限制
+- **任务处理**：同一时间只处理一个同步任务
+- **超时时间**：GitHub Actions 最多等待 5 分钟
+
+## 常见问题
+
+**Q: 支持哪些镜像源？**
+A: 支持所有公共 Docker 仓库（Docker Hub、GCR、K8s 等）
+
+**Q: 如何查看同步历史？**
+A: 查看 GitHub Actions 运行历史或仓库的 `images.txt` 提交记录
+
+**Q: 失败会重试吗？**
+A: 不会自动重试，需要手动重新发送镜像名称
+
+**Q: 可以同步私有仓库镜像吗？**
+A: 需要配置相应的认证信息
 
 ## 相关链接
 
 - [参考项目](https://github.com/tech-shrimp/docker_image_pusher) - docker_image_pusher
+- [企业微信 API 文档](https://developer.work.weixin.qq.com/document)
+- [GitHub Actions 文档](https://docs.github.com/actions)
 
 ## 许可证
 
