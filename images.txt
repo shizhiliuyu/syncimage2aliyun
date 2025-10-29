@@ -1,2 +1,1 @@
-csi-provisioner:v5.3.0-20250826 to registry.cn-hangzhou.aliyuncs.com/super-ghost/csi-provisioner:v5.3.0-20250826
 nginx:1.25.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:1.25.0
