@@ -1,1 +1,1 @@
-mysql:5.7 to registry.cn-hangzhou.aliyuncs.com/syncimage2aliyun/mysql:5.7
+nasqueron/mysql:8.0 to registry.cn-hangzhou.aliyuncs.com/syncimage2aliyun/mysql:8.0
