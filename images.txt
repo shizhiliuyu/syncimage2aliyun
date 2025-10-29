@@ -1,1 +1,1 @@
-help:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/help:latest
+centos:7.6.1810 to registry.cn-hangzhou.aliyuncs.com/super-ghost/centos:7.6.1810
