@@ -1,1 +1,1 @@
-nginx:1.25.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:1.25.0
+nginx:1.25.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:1.25.1
