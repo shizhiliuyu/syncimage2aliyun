@@ -1,1 +1,1 @@
-nasqueron/mysql:8.0 to registry.cn-hangzhou.aliyuncs.com/syncimage2aliyun/mysql:8.0
+nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
