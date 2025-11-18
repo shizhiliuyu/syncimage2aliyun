@@ -1,1 +1,1 @@
-python:3.12-slim to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.12-slim
+nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
