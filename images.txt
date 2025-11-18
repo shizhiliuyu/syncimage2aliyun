@@ -1,1 +1,1 @@
-nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
+nignx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nignx:latest
