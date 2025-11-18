@@ -1,1 +1,1 @@
-redis:7.0.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/redis:7.0.4
+onlyoffice/documentserver:7.1.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/documentserver:7.1.1
