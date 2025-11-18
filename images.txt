@@ -1,1 +1,1 @@
-dataelement/bisheng-backend:v2.0.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/bisheng-backend:v2.0.3
+dataelement/bisheng-frontend:v2.0.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/bisheng-frontend:v2.0.3
