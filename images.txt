@@ -1,1 +1,1 @@
-nignx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nignx:latest
+mysql:8.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0
