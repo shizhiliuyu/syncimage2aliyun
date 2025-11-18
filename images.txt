@@ -1,1 +1,1 @@
-onlyoffice/documentserver:7.1.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/documentserver:7.1.1
+dataelement/bisheng-backend:v2.0.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/bisheng-backend:v2.0.3
