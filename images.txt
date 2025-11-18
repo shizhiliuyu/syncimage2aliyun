@@ -1,2 +1,1 @@
-minio/minio:RELEASE.2023-03-20T20-16-18Z to registry.cn-hangzhou.aliyuncs.com/super-ghost/minio:RELEASE.2023-03-20T20-16-18Z
-minio/minio:RELEASE.2023-03-20T20-16-18Z to registry.cn-hangzhou.aliyuncs.com/super-ghost/minio:RELEASE.2023-03-20T20-16-18Z
+milvusdb/milvus:v2.5.10 to registry.cn-hangzhou.aliyuncs.com/super-ghost/milvus:v2.5.10
