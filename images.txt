@@ -1,1 +1,1 @@
-rancher/mirrored-coredns-coredns:1.7.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mirrored-coredns-coredns:1.7.0
+nacos/nacos-server:v2.0.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nacos-server:v2.0.3
