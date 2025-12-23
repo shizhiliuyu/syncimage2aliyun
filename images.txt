@@ -1,1 +1,1 @@
-nacos/nacos-server:v2.0.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nacos-server:v2.0.3
+sonatype/nexus3:3.38.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nexus3:3.38.0
