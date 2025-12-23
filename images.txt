@@ -1,1 +1,1 @@
-milvusdb/milvus:v2.5.10 to registry.cn-hangzhou.aliyuncs.com/super-ghost/milvus:v2.5.10
+rancher/mirrored-coreos-etcd:v3.4.15-rancher1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mirrored-coreos-etcd:v3.4.15-rancher1
