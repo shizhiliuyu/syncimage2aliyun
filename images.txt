@@ -1,1 +1,1 @@
-fooololo/log-lottery:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/log-lottery:latest
+rustdesk/rustdesk-server:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/rustdesk-server:latest
