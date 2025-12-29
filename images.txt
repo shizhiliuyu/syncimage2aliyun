@@ -1,1 +1,1 @@
-sonatype/nexus3:3.38.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nexus3:3.38.0
+fooololo/log-lottery:lateest to registry.cn-hangzhou.aliyuncs.com/super-ghost/log-lottery:lateest
