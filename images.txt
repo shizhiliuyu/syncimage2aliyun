@@ -1,1 +1,1 @@
-canal/canal-admin:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/canal-admin:latest
+canal/canal-server:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/canal-server:latest
