@@ -1,1 +1,1 @@
-canal/canal-server:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/canal-server:latest
+percona/percona-xtrabackup:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-xtrabackup:latest
