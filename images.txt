@@ -1,1 +1,1 @@
-percona/percona-xtrabackup:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-xtrabackup:latest
+linshellfeng/datax_web:3.0.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/datax_web:3.0.1
