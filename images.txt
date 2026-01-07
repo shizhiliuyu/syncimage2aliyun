@@ -1,1 +1,1 @@
-registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.17.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kube-state-metrics:v2.17.0
+quay.io/kiwigrid/k8s-sidecar:2.2.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/k8s-sidecar:2.2.1
