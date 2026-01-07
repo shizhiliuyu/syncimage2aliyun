@@ -1,1 +1,1 @@
-yeelabs/yearning:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/yearning:latest
+rancher/system-agent-installer-k3s:v1.31.14-k3s1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/system-agent-installer-k3s:v1.31.14-k3s1
