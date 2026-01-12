@@ -1,1 +1,1 @@
-certimate/certimate:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/certimate:latest
+cloudreve/cloudreve:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/cloudreve:latest
