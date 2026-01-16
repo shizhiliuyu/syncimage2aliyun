@@ -1,1 +1,1 @@
-cloudreve/cloudreve:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/cloudreve:latest
+apache/hertzbeat-collector:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/hertzbeat-collector:latest
