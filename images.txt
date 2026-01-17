@@ -1,1 +1,1 @@
-postgres:15 to registry.cn-hangzhou.aliyuncs.com/super-ghost/postgres:15
+grafana/grafana:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/grafana:latest
