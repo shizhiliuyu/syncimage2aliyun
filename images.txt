@@ -1,1 +1,1 @@
-apache/hertzbeat-collector:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/hertzbeat-collector:latest
+apache/hertzbeat:1.7.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/hertzbeat:1.7.3
