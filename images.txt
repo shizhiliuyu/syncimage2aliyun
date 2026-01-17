@@ -1,1 +1,1 @@
-victoriametrics/victoria-metrics:v1.95.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/victoria-metrics:v1.95.1
+postgres:15 to registry.cn-hangzhou.aliyuncs.com/super-ghost/postgres:15
