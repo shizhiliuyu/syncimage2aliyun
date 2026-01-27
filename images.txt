@@ -1,1 +1,1 @@
-rancher/rancher-agent:v2.10.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.10.3
+yeelabs/yearning:v3.1.8 to registry.cn-hangzhou.aliyuncs.com/super-ghost/yearning:v3.1.8
