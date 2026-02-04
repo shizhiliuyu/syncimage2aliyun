@@ -1,1 +1,1 @@
-yeelabs/yearning:v3.1.5 to registry.cn-hangzhou.aliyuncs.com/super-ghost/yearning:v3.1.5
+vulnerables/web-dvwa:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/web-dvwa:latest
