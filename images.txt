@@ -1,1 +1,1 @@
-fluent/fluentd:v1.16-1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/fluentd:v1.16-1
+docker.elastic.co/logstash/logstash:8.11.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/logstash:8.11.0
