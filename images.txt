@@ -1,1 +1,1 @@
-vulnerables/web-dvwa:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/web-dvwa:latest
+fluent/fluentd:v1.16-1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/fluentd:v1.16-1
