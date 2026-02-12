@@ -1,1 +1,1 @@
-docker.elastic.co/logstash/logstash:8.11.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/logstash:8.11.0
+fluent/fluentd:edge-debian to registry.cn-hangzhou.aliyuncs.com/super-ghost/fluentd:edge-debian
