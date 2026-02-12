@@ -1,1 +1,1 @@
-fluent/fluentd:edge-debian to registry.cn-hangzhou.aliyuncs.com/super-ghost/fluentd:edge-debian
+elasticsearch:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/elasticsearch:latest
