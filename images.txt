@@ -1,1 +1,1 @@
-elasticsearch:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/elasticsearch:latest
+elasticsearch:8.19.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/elasticsearch:8.19.0
