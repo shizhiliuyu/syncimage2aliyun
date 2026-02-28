@@ -1,1 +1,1 @@
-bitnami/rabbitmq:3.13.2-debian-12-r0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rabbitmq:3.13.2-debian-12-r0
+bitnamilegacy/rabbitmq:3.13.2-debian-12-r0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rabbitmq:3.13.2-debian-12-r0
