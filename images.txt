@@ -1,1 +1,1 @@
-onlyoffice/documentserver:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/documentserver:latest
+rancher/shell:v0.6.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/shell:v0.6.2
