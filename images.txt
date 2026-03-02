@@ -1,1 +1,1 @@
-node:22-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/node:22-alpine
+neo4j:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/neo4j:latest
