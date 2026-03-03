@@ -1,1 +1,1 @@
-milvusdb/etcd:3.5.25-r1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/etcd:3.5.25-r1
+apachepulsar/pulsar:3.0.7 to registry.cn-hangzhou.aliyuncs.com/super-ghost/pulsar:3.0.7
