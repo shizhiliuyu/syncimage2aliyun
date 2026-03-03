@@ -1,1 +1,1 @@
-neo4j:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/neo4j:latest
+milvusdb/etcd:3.5.25-r1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/etcd:3.5.25-r1
