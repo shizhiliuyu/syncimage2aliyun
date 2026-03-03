@@ -1,1 +1,1 @@
-milvusdb/milvus:v2.6.11 to registry.cn-hangzhou.aliyuncs.com/super-ghost/milvus:v2.6.11
+apachepulsar/pulsar:2.9.5 to registry.cn-hangzhou.aliyuncs.com/super-ghost/pulsar:2.9.5
