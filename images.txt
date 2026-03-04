@@ -1,1 +1,1 @@
-busybox:1.28 to registry.cn-hangzhou.aliyuncs.com/super-ghost/busybox:1.28
+bitnamilegacy/postgresql:18.0.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/postgresql:18.0.0
