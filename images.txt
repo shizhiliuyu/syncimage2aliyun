@@ -1,1 +1,1 @@
-bitnami/postgresql:17.6.0-debian-12-r4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/postgresql:17.6.0-debian-12-r4
+bitnamilegacy/postgresql:17.6.0-debian-12-r4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/postgresql:17.6.0-debian-12-r4
