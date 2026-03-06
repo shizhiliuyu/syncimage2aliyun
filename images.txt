@@ -1,1 +1,1 @@
-rustdesk/rustdesk-server:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/rustdesk-server:latest
+rustdesk/rustdesk-server:latest/arm64 to registry.cn-hangzhou.aliyuncs.com/super-ghost/arm64:latest/arm64
