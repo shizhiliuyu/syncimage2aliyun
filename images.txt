@@ -1,1 +1,1 @@
-rancher/hyperkube:v1.30.14-rancher1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/hyperkube:v1.30.14-rancher1
+rancher/rancher:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.13.3
