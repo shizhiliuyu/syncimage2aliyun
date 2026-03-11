@@ -1,1 +1,1 @@
-rancher/rancher/shell:v0.6.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/shell:v0.6.2
+rancher/shell:v0.6.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/shell:v0.6.2
