@@ -1,1 +1,16 @@
-rancher/shell:v0.6.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/shell:v0.6.2
+rancher/aks-operator:v1.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/aks-operator:v1.13.3
+rancher/appco-alertmanager:0.28.1-12.7 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-alertmanager:0.28.1-12.7
+rancher/appco-grafana:12.1.1-2.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-grafana:12.1.1-2.2
+rancher/appco-k8s-sidecar:1.30.7-11.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-k8s-sidecar:1.30.7-11.3
+rancher/appco-kube-rbac-proxy:0.19.1-15.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-kube-rbac-proxy:0.19.1-15.2
+rancher/appco-kube-state-metrics:2.17.0-10.7 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-kube-state-metrics:2.17.0-10.7
+rancher/appco-node-exporter:1.9.1-11.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-node-exporter:1.9.1-11.3
+rancher/appco-redis:8.0.3-2.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-redis:8.0.3-2.1
+rancher/appco-thanos:0.39.2-7.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/appco-thanos:0.39.2-7.3
+rancher/backup-restore-operator:v9.0.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/backup-restore-operator:v9.0.1
+rancher/cluster-api-controller:v1.10.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cluster-api-controller:v1.10.6
+rancher/compliance-operator:v1.3.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/compliance-operator:v1.3.3
+rancher/eks-operator:v1.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/eks-operator:v1.13.3
+rancher/fleet-agent:v0.14.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/fleet-agent:v0.14.3
+rancher/fleet:v0.14.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/fleet:v0.14.3
+rancher/gke-operator:v1.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gke-operator:v1.13.3
