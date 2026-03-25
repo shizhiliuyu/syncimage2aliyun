@@ -1,1 +1,1 @@
-redis:7-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/redis:7-alpine
+registry.k8s.io/pause:3.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/pause:3.1
