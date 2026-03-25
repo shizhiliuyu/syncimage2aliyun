@@ -1,1 +1,1 @@
-pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime to registry.cn-hangzhou.aliyuncs.com/super-ghost/pytorch:2.2.0-cuda12.1-cudnn8-runtime
+redis:7-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/redis:7-alpine
