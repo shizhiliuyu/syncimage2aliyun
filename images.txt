@@ -1,1 +1,1 @@
-registry.k8s.io/pause:3.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/pause:3.1
+pytorch/pytorch:2.2.0-cuda12.1-cudnn8-runtime to registry.cn-hangzhou.aliyuncs.com/super-ghost/pytorch:2.2.0-cuda12.1-cudnn8-runtime
