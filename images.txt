@@ -1,1 +1,1 @@
-mineru:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/mineru:latest
+onlyoffice/documentserver:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/documentserver:latest
