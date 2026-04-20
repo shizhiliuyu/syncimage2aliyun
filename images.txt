@@ -1,1 +1,1 @@
-rancher/rancher-agent:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.13.3
+velero/velero:v1.15.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/velero:v1.15.0
