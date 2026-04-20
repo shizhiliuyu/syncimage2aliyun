@@ -1,1 +1,1 @@
-alpine:3.18 to registry.cn-hangzhou.aliyuncs.com/super-ghost/alpine:3.18
+rancher/rancher-agent:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.13.3
