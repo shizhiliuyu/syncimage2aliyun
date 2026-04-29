@@ -1,1 +1,1 @@
-registry.cn-hangzhou.aliyuncs.com/rancher/rancher:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.13.3
+rancher/rancher:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.13.3
