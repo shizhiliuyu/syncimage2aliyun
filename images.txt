@@ -1,1 +1,1 @@
-registry.k8s.io/sig-storage/snapshot-controller:v6.3.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/snapshot-controller:v6.3.1
+registry.cn-hangzhou.aliyuncs.com/rancher/rancher:v2.13.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.13.3
