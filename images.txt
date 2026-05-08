@@ -1,1 +1,1 @@
-velero/velero-plugin-for-aws:v1.9.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/velero-plugin-for-aws:v1.9.0
+maven:3.8.1-jdk-11 to registry.cn-hangzhou.aliyuncs.com/super-ghost/maven:3.8.1-jdk-11
