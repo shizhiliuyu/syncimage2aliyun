@@ -1,1 +1,1 @@
-maven:3.8.1-jdk-11 to registry.cn-hangzhou.aliyuncs.com/super-ghost/maven:3.8.1-jdk-11
+gitlab/gitlab-ce:16.9.11-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:16.9.11-ce.0
