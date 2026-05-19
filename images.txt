@@ -1,1 +1,1 @@
-gitlab/gitlab-ce:16.9.11-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:16.9.11-ce.0
+nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
