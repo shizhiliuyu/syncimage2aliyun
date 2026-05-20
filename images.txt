@@ -1,1 +1,1 @@
-registry.k8s.io/node-problem-detector:v0.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/node-problem-detector:v0.1
+alpine:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/alpine:latest
