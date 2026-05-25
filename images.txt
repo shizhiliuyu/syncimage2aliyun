@@ -1,1 +1,1 @@
-alpine:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/alpine:latest
+apecloud/kubeblocks-tools:1.0.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubeblocks-tools:1.0.2
