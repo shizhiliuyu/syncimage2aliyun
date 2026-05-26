@@ -1,1 +1,1 @@
-apecloud/kubeblocks-tools:1.0.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubeblocks-tools:1.0.2
+nvidia/cuda:12.4.1-base-ubuntu22.04 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cuda:12.4.1-base-ubuntu22.04
