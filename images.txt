@@ -1,1 +1,1 @@
-nvidia/cuda:12.4.1-base-ubuntu22.04 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cuda:12.4.1-base-ubuntu22.04
+jenkins/jenkins:2.566-jdk21 to registry.cn-hangzhou.aliyuncs.com/super-ghost/jenkins:2.566-jdk21
