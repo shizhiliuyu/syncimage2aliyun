@@ -1,1 +1,1 @@
-jenkins/jenkins:2.566-jdk21 to registry.cn-hangzhou.aliyuncs.com/super-ghost/jenkins:2.566-jdk21
+python:3.10-slim-bookworm to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.10-slim-bookworm
