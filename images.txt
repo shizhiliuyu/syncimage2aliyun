@@ -1,1 +1,1 @@
-python:3.10-slim-bookworm to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.10-slim-bookworm
+mcr.microsoft.com/mssql/server:2022-latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/server:2022-latest
