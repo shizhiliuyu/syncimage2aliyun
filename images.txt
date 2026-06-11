@@ -1,1 +1,1 @@
-apecloud/datasafed:0.2.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/datasafed:0.2.3
+apecloud/orchestrator:v3.2.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/orchestrator:v3.2.6
