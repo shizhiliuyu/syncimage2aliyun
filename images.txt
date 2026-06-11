@@ -1,1 +1,1 @@
-apecloud/orchestrator:v3.2.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/orchestrator:v3.2.6
+apecloud/mysql:8.0.35 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.35
