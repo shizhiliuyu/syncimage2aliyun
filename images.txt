@@ -1,1 +1,1 @@
-apecloud/kubeblocks-dataprotection:1.0.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubeblocks-dataprotection:1.0.2
+apecloud/kubeblocks-charts:1.0.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubeblocks-charts:1.0.2
