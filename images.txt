@@ -1,1 +1,1 @@
-apecloud/mysql:8.0.35 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.35
+apecloud/mysql_audit_log:8.0.33 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql_audit_log:8.0.33
