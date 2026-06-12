@@ -1,1 +1,1 @@
-apecloud/wal-g-mysql:3.0.0-ubuntu to registry.cn-hangzhou.aliyuncs.com/super-ghost/wal-g-mysql:3.0.0-ubuntu
+apecloud/proxysql:2.4.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/proxysql:2.4.4
