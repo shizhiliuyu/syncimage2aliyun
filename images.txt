@@ -1,1 +1,1 @@
-apecloud/mysqld-exporter:0.15.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysqld-exporter:0.15.1
+apecloud/wal-g-mysql:3.0.0-ubuntu to registry.cn-hangzhou.aliyuncs.com/super-ghost/wal-g-mysql:3.0.0-ubuntu
