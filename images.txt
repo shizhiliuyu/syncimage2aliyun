@@ -1,1 +1,1 @@
-apecloud/mysql:8.0.39 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.39
+apecloud/xtrabackup:8.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/xtrabackup:8.0
