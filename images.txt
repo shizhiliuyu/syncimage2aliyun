@@ -1,1 +1,1 @@
-apecloud/proxysql:2.4.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/proxysql:2.4.4
+apecloud/mysql:8.0.39 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.39
