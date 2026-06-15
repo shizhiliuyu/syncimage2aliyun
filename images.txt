@@ -1,1 +1,1 @@
-prom/prometheus:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/prometheus:latest
+grafana/grafana:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/grafana:latest
