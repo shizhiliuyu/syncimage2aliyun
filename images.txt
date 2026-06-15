@@ -1,1 +1,1 @@
-apecloud/jemalloc:5.3.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/jemalloc:5.3.0
+ghcr.io/graalvm/jdk:21.3.17 to registry.cn-hangzhou.aliyuncs.com/super-ghost/jdk:21.3.17
