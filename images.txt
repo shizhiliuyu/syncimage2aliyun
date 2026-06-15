@@ -1,1 +1,1 @@
-grafana/grafana:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/grafana:latest
+prom/alertmanager:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/alertmanager:latest
