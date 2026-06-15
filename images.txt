@@ -1,1 +1,1 @@
-ghcr.io/graalvm/jdk:21.3.17 to registry.cn-hangzhou.aliyuncs.com/super-ghost/jdk:21.3.17
+prom/prometheus:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/prometheus:latest
