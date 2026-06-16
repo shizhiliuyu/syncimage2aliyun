@@ -1,1 +1,1 @@
-prom/alertmanager:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/alertmanager:latest
+apecloud/syncer:0.6.5 to registry.cn-hangzhou.aliyuncs.com/super-ghost/syncer:0.6.5
