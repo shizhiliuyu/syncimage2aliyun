@@ -1,1 +1,1 @@
-apecloud/syncer:0.6.5 to registry.cn-hangzhou.aliyuncs.com/super-ghost/syncer:0.6.5
+apecloud/percona-xtrabackup:8.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-xtrabackup:8.0
