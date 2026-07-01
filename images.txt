@@ -1,1 +1,1 @@
-apecloud/percona-xtrabackup:8.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-xtrabackup:8.0
+thingsgateway:1.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/thingsgateway:1.0
