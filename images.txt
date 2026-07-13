@@ -1,1 +1,1 @@
-debian:12.10-slim to registry.cn-hangzhou.aliyuncs.com/super-ghost/debian:12.10-slim
+t8y2/dbx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:latest
