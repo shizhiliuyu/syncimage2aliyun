@@ -1,1 +1,1 @@
-t8y2/dbx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:latest
+thijsvanloef/palworld-server-docker:v2.5.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-docker:v2.5.1
