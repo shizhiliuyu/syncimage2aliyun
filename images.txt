@@ -1,1 +1,1 @@
-jokerwho/palworld-server-tool:0.12.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-tool:0.12.1
+jokerwho/palworld-server-tool:0.12.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-tool:0.12.2
