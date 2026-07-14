@@ -1,1 +1,1 @@
-thijsvanloef/palworld-server-docker:v2.5.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-docker:v2.5.1
+jokerwho/palworld-server-tool:0.12.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-tool:0.12.0
