@@ -1,1 +1,1 @@
-tdengine/tdengine:3.4.2.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/tdengine:3.4.2.0
+tdengine/tdengine:3.0.2.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/tdengine:3.0.2.2
