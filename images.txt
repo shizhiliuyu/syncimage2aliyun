@@ -1,1 +1,1 @@
-jokerwho/palworld-server-tool-agent:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/palworld-server-tool-agent:latest
+tdengine/tdengine:3.2.3.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/tdengine:3.2.3.0
