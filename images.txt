@@ -1,1 +1,1 @@
-tdengine/tdengine:3.3.6.13 to registry.cn-hangzhou.aliyuncs.com/super-ghost/tdengine:3.3.6.13
+rancher/kuberlr-kubectl:v7.1.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kuberlr-kubectl:v7.1.1
