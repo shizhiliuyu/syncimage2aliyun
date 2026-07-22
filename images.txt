@@ -1,1 +1,1 @@
-rancher/kuberlr-kubectl:v7.1.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kuberlr-kubectl:v7.1.1
+rancher/system-agent-installer-rke2:v1.31.14-rke2r1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/system-agent-installer-rke2:v1.31.14-rke2r1
