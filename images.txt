@@ -1,1 +1,1 @@
-rancher/mirrored-coredns-coredns:1.13.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mirrored-coredns-coredns:1.13.1
+nginx/nginx-ingress:5.5.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx-ingress:5.5.4
