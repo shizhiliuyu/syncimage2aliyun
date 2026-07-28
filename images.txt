@@ -1,1 +1,1 @@
-nginx/nginx-ingress:5.5.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx-ingress:5.5.4
+velero/velero-plugin-for-aws:v1.9.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/velero-plugin-for-aws:v1.9.0
