@@ -1,1 +1,1 @@
-rancher/rancher:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:latest
+python:3.13.2-slim to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.13.2-slim
