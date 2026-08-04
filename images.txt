@@ -1,1 +1,1 @@
-t8y2/dbx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:latest
+dockurr/windows:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/windows:latest
