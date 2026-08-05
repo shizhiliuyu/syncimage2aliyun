@@ -1,1 +1,1 @@
-rancher/mirrored-pause:3.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mirrored-pause:3.6
+rancher/rancher-agent:v2.10.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.10.3
