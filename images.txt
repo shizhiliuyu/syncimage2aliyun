@@ -1,1 +1,1 @@
-dockurr/windows:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/windows:latest
+docker.io/apecloud/mysql:8.0.44 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.44
