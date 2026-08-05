@@ -1,1 +1,1 @@
-docker.io/apecloud/mysql:8.0.44 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mysql:8.0.44
+rancher/system-agent-installer-k3s:v1.35.6-k3s1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/system-agent-installer-k3s:v1.35.6-k3s1
