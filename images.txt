@@ -1,1 +1,1 @@
-minio/minio:RELEASE.2025-04-22T22-12-26Z to registry.cn-hangzhou.aliyuncs.com/super-ghost/minio:RELEASE.2025-04-22T22-12-26Z
+rancher/local-path-provisioner:v0.0.35 to registry.cn-hangzhou.aliyuncs.com/super-ghost/local-path-provisioner:v0.0.35
