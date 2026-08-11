@@ -1,1 +1,1 @@
-rancher/local-path-provisioner:v0.0.35 to registry.cn-hangzhou.aliyuncs.com/super-ghost/local-path-provisioner:v0.0.35
+busybox:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/busybox:latest
