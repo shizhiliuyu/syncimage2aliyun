@@ -1,1 +1,1 @@
-docker.io/apecloud/percona-server-mongodb:7.0.28 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-server-mongodb:7.0.28
+docker.io/apecloud/mongodb_exporter:0.44.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mongodb_exporter:0.44.0
