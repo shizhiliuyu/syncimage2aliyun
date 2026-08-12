@@ -1,1 +1,1 @@
-docker.io/apecloud/syncer:0.6.7 to registry.cn-hangzhou.aliyuncs.com/super-ghost/syncer:0.6.7
+docker.io/apecloud/kubectl:1.29 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubectl:1.29
