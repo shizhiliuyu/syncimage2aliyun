@@ -1,1 +1,1 @@
-docker.io/apecloud/kubectl:1.29 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubectl:1.29
+docker.io/apecloud/percona-backup-mongodb:2.12.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-backup-mongodb:2.12.0
