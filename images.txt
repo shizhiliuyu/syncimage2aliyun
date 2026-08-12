@@ -1,1 +1,1 @@
-busybox:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/busybox:latest
+eclipse-temurin:21.0.7_6-jdk-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/eclipse-temurin:21.0.7_6-jdk-alpine
