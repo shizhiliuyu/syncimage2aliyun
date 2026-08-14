@@ -1,1 +1,1 @@
-docker.io/apecloud/mongodb_exporter:0.44.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mongodb_exporter:0.44.0
+gitlab/gitlab-ce:19.0.6-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:19.0.6-ce.0
