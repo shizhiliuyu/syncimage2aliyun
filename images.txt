@@ -1,1 +1,1 @@
-gitlab/gitlab-ce:19.0.6-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:19.0.6-ce.0
+docker.io/apecloud/dbctl:0.2.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbctl:0.2.0
