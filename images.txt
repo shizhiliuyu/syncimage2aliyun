@@ -1,1 +1,2 @@
-docker.io/apecloud/spilo:16.4.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/spilo:16.4.0
+docker.io/apecloud/spilo-init:0.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/spilo-init:0.2
+docker.io/apecloud/pgbouncer:1.19.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/pgbouncer:1.19.0
