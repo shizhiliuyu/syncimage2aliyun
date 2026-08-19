@@ -1,1 +1,1 @@
-python:3.13-slim-bookworm to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.13-slim-bookworm
+ghcr.io/astral-sh/uv:0.10.12 to registry.cn-hangzhou.aliyuncs.com/super-ghost/uv:0.10.12
