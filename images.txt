@@ -1,1 +1,1 @@
-nginx:1.28-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:1.28-alpine
+nginx:alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:alpine
