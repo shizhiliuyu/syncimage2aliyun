@@ -1,12 +1,1 @@
-gitlab/gitlab-ce:16.11.10-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:16.11.10-ce.0
-gitlab/gitlab-ce:17.1.8-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:17.1.8-ce.0
-gitlab/gitlab-ce:17.3.7-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:17.3.7-ce.0
-gitlab/gitlab-ce:17.5.5-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:17.5.5-ce.0
-gitlab/gitlab-ce:17.8.7-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:17.8.7-ce.0
-gitlab/gitlab-ce:17.11.7-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:17.11.7-ce.0
-gitlab/gitlab-ce:18.2.8-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:18.2.8-ce.0
-gitlab/gitlab-ce:18.5.7-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:18.5.7-ce.0
-gitlab/gitlab-ce:18.8.11-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:18.8.11-ce.0
-gitlab/gitlab-ce:18.11.11-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:18.11.11-ce.0
-gitlab/gitlab-ce:19.2.4-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:19.2.4-ce.0
-gitlab/gitlab-ce:19.3.0-ce.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-ce:19.3.0-ce.0
+rancher/rancher:v2.14.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.14.1
