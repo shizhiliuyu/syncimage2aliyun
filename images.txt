@@ -1,1 +1,1 @@
-bitnami/kubectl:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubectl:latest
+python:3.11-slim to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.11-slim
