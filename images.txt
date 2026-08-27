@@ -1,1 +1,1 @@
-rancher/rancher:v2.14.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.14.1
+bitnami/kubectl:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubectl:latest
