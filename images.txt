@@ -1,1 +1,1 @@
-t8y2/dbx:v0.6.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:v0.6.6
+t8y2/dbx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:latest
