@@ -1,1 +1,1 @@
-python:3.10 to registry.cn-hangzhou.aliyuncs.com/super-ghost/python:3.10
+ocker.cnb.cool/dbxio.com/dbx:v0.6.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:v0.6.6
