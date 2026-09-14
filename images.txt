@@ -1,1 +1,1 @@
-nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
+nacos/nacos-server:v2.4.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nacos-server:v2.4.0
