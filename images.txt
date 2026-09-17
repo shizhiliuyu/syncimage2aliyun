@@ -1,1 +1,1 @@
-rancher/rancher-agent:v2.14.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.14.3
+milvusdb/milvus-backup:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/milvus-backup:latest
