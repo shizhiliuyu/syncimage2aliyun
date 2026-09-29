@@ -1,1 +1,1 @@
-milvusdb/milvus-backup:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/milvus-backup:latest
+jenkins/jenkins:lts to registry.cn-hangzhou.aliyuncs.com/super-ghost/jenkins:lts
