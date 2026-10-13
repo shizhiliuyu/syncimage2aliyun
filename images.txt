@@ -1,1 +1,1 @@
-nginx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/nginx:latest
+rancher/kuberlr-kubectl:v7.1.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kuberlr-kubectl:v7.1.3
