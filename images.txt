@@ -1,1 +1,1 @@
-rancher/rancher:v2.15.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.15.2
+node:24.12.0-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/node:24.12.0-alpine
