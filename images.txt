@@ -1,1 +1,1 @@
-rancher/kuberlr-kubectl:v7.1.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kuberlr-kubectl:v7.1.3
+rancher/rancher:v2.14.6 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher:v2.14.6
