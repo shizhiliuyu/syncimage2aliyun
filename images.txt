@@ -1,1 +1,4 @@
-node:24.12.0-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/node:24.12.0-alpine
+nvcr.io/nvidia/gpu-operator:v25.3.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator:v25.3.4
+nvcr.io/nvidia/k8s-device-plugin:v0.17.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/k8s-device-plugin:v0.17.4
+nvcr.io/nvidia/cloud-native/gpu-operator-validator:v25.3.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator-validator:v25.3.4
+nvcr.io/nvidia/cuda:13.0.1-base-ubi9 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cuda:13.0.1-base-ubi9
