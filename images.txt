@@ -1,1 +1,4 @@
-nvcr.io/nvidia/gpu-operator:v26.3.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator:v26.3.2
+nvcr.io/nvidia/k8s-device-plugin:v0.19.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/k8s-device-plugin:v0.19.2
+nvcr.io/nvidia/k8s/container-toolkit:v1.19.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/container-toolkit:v1.19.1
+nvcr.io/nvidia/k8s/dcgm-exporter:4.5.3-4.8.2-distroless to registry.cn-hangzhou.aliyuncs.com/super-ghost/dcgm-exporter:4.5.3-4.8.2-distroless
+nvcr.io/nvidia/k8s-device-plugin:v0.19.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/k8s-device-plugin:v0.19.2
