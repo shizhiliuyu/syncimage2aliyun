@@ -1,4 +1,4 @@
-nvcr.io/nvidia/gpu-operator:v25.3.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator:v25.3.4
-nvcr.io/nvidia/k8s-device-plugin:v0.17.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/k8s-device-plugin:v0.17.4
-nvcr.io/nvidia/cloud-native/gpu-operator-validator:v25.3.4 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator-validator:v25.3.4
-nvcr.io/nvidia/cuda:13.0.1-base-ubi9 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cuda:13.0.1-base-ubi9
+nvcr.io/nvidia/gpu-operator:v26.3.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gpu-operator:v26.3.2
+registry.k8s.io/nfd/node-feature-discovery:v0.18.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/node-feature-discovery:v0.18.3
+registry.k8s.io/nfd/node-feature-discovery:v0.18.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/node-feature-discovery:v0.18.3
+registry.k8s.io/nfd/node-feature-discovery:v0.18.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/node-feature-discovery:v0.18.3
