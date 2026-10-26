@@ -1,1 +1,1 @@
-registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kube-state-metrics:v2.20.0
+quay.io/prometheus/prometheus:v3.15.0-distroless to registry.cn-hangzhou.aliyuncs.com/super-ghost/prometheus:v3.15.0-distroless
