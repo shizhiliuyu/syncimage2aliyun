@@ -1,1 +1,1 @@
-nvcr.io/nvidia/cuda:12.2.0-base-ubuntu22.04 to registry.cn-hangzhou.aliyuncs.com/super-ghost/cuda:12.2.0-base-ubuntu22.04
+registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kube-state-metrics:v2.20.0
