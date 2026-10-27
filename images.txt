@@ -1,1 +1,1 @@
-quay.io/prometheus/prometheus:v3.15.0-distroless to registry.cn-hangzhou.aliyuncs.com/super-ghost/prometheus:v3.15.0-distroless
+danielqsj/kafka-exporter:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/kafka-exporter:latest
