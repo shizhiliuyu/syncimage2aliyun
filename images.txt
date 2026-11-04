@@ -1,1 +1,1 @@
-danielqsj/kafka-exporter:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/kafka-exporter:latest
+amazoncorretto:8 to registry.cn-hangzhou.aliyuncs.com/super-ghost/amazoncorretto:8
