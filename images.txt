@@ -1,2 +1,1 @@
-docker.io/library/maven:3.9-eclipse-temurin-21 to registry.cn-hangzhou.aliyuncs.com/super-ghost/maven:3.9-eclipse-temurin-21
-gcr.io/kaniko-project/executor:v1.23.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/executor:v1.23.2
+registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:x86_64-v19.5.2 to registry.cn-hangzhou.aliyuncs.com/super-ghost/gitlab-runner-helper:x86_64-v19.5.2
