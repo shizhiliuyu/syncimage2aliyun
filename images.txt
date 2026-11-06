@@ -1,1 +1,1 @@
-amazoncorretto:8 to registry.cn-hangzhou.aliyuncs.com/super-ghost/amazoncorretto:8
+t8y2/dbx:latest to registry.cn-hangzhou.aliyuncs.com/super-ghost/dbx:latest
