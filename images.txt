@@ -1,3 +1,1 @@
-quay.io/argoproj/argocd:v3.6.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/argocd:v3.6.1
-ghcr.io/dexidp/dex:v2.46.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/dex:v2.46.0
-public.ecr.aws/docker/library/redis:8.10.1-alpine to registry.cn-hangzhou.aliyuncs.com/super-ghost/redis:8.10.1-alpine
+rancher/mirrored-library-busybox:1.36.1 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mirrored-library-busybox:1.36.1
