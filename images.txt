@@ -1,1 +1,1 @@
-velero/velero:v1.15.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/velero:v1.15.0
+sonatype/nexus3:3.82.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/nexus3:3.82.0
