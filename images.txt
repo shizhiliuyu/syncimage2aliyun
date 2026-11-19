@@ -1,5 +1,1 @@
-docker.io/apecloud/percona-server-mongodb:7.0.28 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-server-mongodb:7.0.28
-docker.io/apecloud/percona-backup-mongodb:2.12.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/percona-backup-mongodb:2.12.0
-docker.io/apecloud/syncer:0.6.7 to registry.cn-hangzhou.aliyuncs.com/super-ghost/syncer:0.6.7
-docker.io/apecloud/kubectl:1.29 to registry.cn-hangzhou.aliyuncs.com/super-ghost/kubectl:1.29
-docker.io/apecloud/mongodb_exporter:0.44.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/mongodb_exporter:0.44.0
+velero/velero:v1.15.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/velero:v1.15.0
