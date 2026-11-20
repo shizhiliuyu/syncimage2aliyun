@@ -1,1 +1,1 @@
-questdb/questdb:9.4.3 to registry.cn-hangzhou.aliyuncs.com/super-ghost/questdb:9.4.3
+rancher/rancher-agent:v2.14.0 to registry.cn-hangzhou.aliyuncs.com/super-ghost/rancher-agent:v2.14.0
